@@ -1,0 +1,50 @@
+apply plugin: 'findbugs'
+
+task findbugs(type: FindBugs) {
+    ignoreFailures = true // Fail early.
+    excludeFilter = file("../tools/rules-findbugs.xml")
+    classes = fileTree("$project.buildDir/intermediates/classes/debug/com/dbbest")
+    source = fileTree('src/main/java/com/dbbest/')
+    classpath = files()
+
+    effort = 'max'
+    reportLevel = 'low' // Report even low priority problems.
+
+    reports {
+        html.enabled = false
+
+        xml.enabled = true
+        xml.withMessages = true
+        xml.destination = "$project.rootDir/build_results/findbugs.xml"
+    }
+
+    afterEvaluate {
+        tasks.findByName('findbugs').dependsOn('assemble')
+        tasks.findByName('check').dependsOn('findbugs')
+    }
+}
+
+//Findbugs can't write to both xml and html files at same time
+//findbugs task runs first and then findbugsHtml than can fail build
+task findbugsHtml(type: FindBugs) {
+    ignoreFailures = rootProject.ext.ignoreFailures
+    excludeFilter = file("../tools/rules-findbugs.xml")
+    classes = fileTree("$project.buildDir/intermediates/classes/debug/com/dbbest")
+    source = fileTree('src/main/java/com/dbbest/')
+    classpath = files()
+
+    effort = 'max'
+    reportLevel = 'low' // Report even low priority problems.
+
+    reports {
+        xml.enabled = false
+        html.enabled = true
+        html.destination = "$project.rootDir/build_results/findbugs.html"
+    }
+
+    afterEvaluate {
+//        tasks.findByName('findbugs').dependsOn('assemble')
+//        tasks.findByName('findbugs').dependsOn('findbugsHtml')
+        tasks.findByName('check').dependsOn('findbugsHtml')
+    }
+}

@@ -1,0 +1,10 @@
+*.iml
+.gradle
+/local.properties
+.idea/
+build_results/
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+docs/~$meraLeap App Requirements v 1.3.docx

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<lint>
+    <issue id="GoogleAppIndexingWarning" severity="ignore"/>
+    <issue id="AllowBackup" severity="ignore"/>
+    <issue id="ContentDescription" severity="ignore"/>
+    <issue id="HardcodedText" severity="error"/>
+    <issue id="Deprecation" severity="error"/>
+    <issue id="RtlEnabled" severity="ignore"/>
+    <issue id="LabelFor" severity="ignore"/>
+    <issue id="InvalidPackage">
+        <ignore regexp="okio-1.11.0.jar"/>
+    </issue>
+    <issue id="InvalidPackage">
+        <ignore regexp="httpclient-4.5.3.jar" />
+    </issue>
+    <issue id="InvalidPackage">
+        <ignore regexp="retrofit-2.2.0.jar"/>
+    </issue>
+    <issue id="UnusedResources">
+        <ignore regexp="R.string.google_crash_reporting_api_key"/>
+    </issue>
+    <issue id="GradleDynamicVersion">
+        <ignore regexp="io.fabric.tools:gradle"/>
+    </issue>
+    <issue id="IconDensities">
+        <ignore regexp="drawable-mdpi"/>
+        <ignore regexp="drawable-hdpi"/>
+    </issue>
+    <issue id="IconMissingDensityFolder">
+        <ignore regexp="drawable-mdpi"/>
+        <ignore regexp="drawable-hdpi"/>
+    </issue>
+    <issue id="IconColors">
+        <ignore regexp="ic_menu_header_bg.png"/>
+    </issue>
+    <issue id="IconDuplicatesConfig" severity="ignore"/>
+    <issue id="IconDipSize" severity="ignore"/>
+    <issue id="all">
+        <ignore path="../500px/500px-android-sdk/"/>
+    </issue>
+</lint>

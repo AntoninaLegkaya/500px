@@ -1,0 +1,48 @@
+def lastBuildNumberUpdate = 0 //Last Build Number when major or minor version was updated
+def buildMajorVersion = 0 //Major version of application - not back support with previous versions (Totally different)
+def buildMinorVersion = 0 //Minor version of application - has partial or full back support with previous versions
+// (Partially different, major bug fixes)
+def buildPatchVersion = buildNumberInt() - lastBuildNumberUpdate //Patch version of application - has full back support with previous versions
+def   SERVER_ENDPOINT = "\"https://api.500px.com/\""
+def buildNumberInt() {
+    if (project.hasProperty('buildNumber')) {
+        return Integer.parseInt(buildNumber)
+    } else {
+        return 0
+    }
+}
+
+android {
+    buildTypes {
+        release {
+            if (project.hasProperty('changeLog') && changeLog.length() > 0) {
+                ext.betaDistributionReleaseNotes = changeLog
+            }
+            ext.betaDistributionEmailsFilePath = "$project.rootDir/tools/beta-distribution-emails.txt"
+            ext.betaDistributionNotifications = true
+        }
+    }
+}
+
+ext {
+    buildVersionNumber = buildNumberInt()//Incremental unique value from each Jenkins/BuildTool application build
+    buildVersionName = "$buildMajorVersion.$buildMinorVersion.$buildPatchVersion"
+
+    TYPE_STRING = "String"
+    TYPE_BOOLEAN = "boolean"
+
+    VARIABLE_API_SERVER_ENDPOINT = "SERVER_ENDPOINT"
+
+    KEY_STORIES_ENDPOINT = "ENDPOINT_STORIES"
+    KEY_STORIES_API_KEY = "API_KEY_STORIES"
+    KEY_IS_DEV_BUILD = "IS_DEV_BUILD"
+
+    SDK_DIR = '..'
+    NATIVE_LIB_DIR = 'libs'
+    JAR_DIR = 'libs'
+
+
+    API_SERVER_ENDPOINT = SERVER_ENDPOINT
+
+
+}

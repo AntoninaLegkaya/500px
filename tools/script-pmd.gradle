@@ -1,0 +1,19 @@
+apply plugin: 'pmd'
+
+task pmd(type: Pmd) {
+    ruleSetFiles = files("$project.rootDir/tools/rules-pmd.xml")
+    source = fileTree('src/main/java/')
+    ignoreFailures = rootProject.ext.ignoreFailures
+
+    reports {
+//        xml.enabled = false
+        html.enabled = true
+        html.destination = "$project.rootDir/build_results/pmd.html"
+        xml.destination = "$project.rootDir/build_results/pmd.xml"
+    }
+}
+
+afterEvaluate {
+    tasks.findByName('pmd').dependsOn('assemble')
+    tasks.findByName('check').dependsOn('pmd')
+}
