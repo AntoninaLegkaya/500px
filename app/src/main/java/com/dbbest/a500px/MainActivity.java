@@ -1,66 +1,55 @@
 package com.dbbest.a500px;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.dbbest.a500px.data.storage.User;
-import com.dbbest.a500px.fivehundredpx.api.FiveHundredException;
-import com.dbbest.a500px.fivehundredpx.api.PxApi;
-import com.dbbest.a500px.fivehundredpx.api.auth.AccessToken;
-import com.dbbest.a500px.fivehundredpx.api.tasks.UserDetailTask;
-import com.dbbest.a500px.fivehundredpx.api.tasks.XAuth500pxTask;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.dbbest.a500px.net.service.ExecuteResultReceiver;
+import com.dbbest.a500px.net.service.ExecuteService;
+import com.dbbest.a500px.ui.PhotosGalleryActivity;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import timber.log.Timber;
+
+import static android.app.DownloadManager.STATUS_FAILED;
+import static android.app.DownloadManager.STATUS_RUNNING;
+import static android.app.DownloadManager.STATUS_SUCCESSFUL;
 
 @SuppressFBWarnings(value = "UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR")
 public class MainActivity extends AppCompatActivity implements
-        XAuth500pxTask.Delegate, UserDetailTask.Delegate {
+        ExecuteResultReceiver.Receiver {
 
-    private static final int CODE_GET_PHOTOS = 1;
-
+    private ExecuteResultReceiver receiver;
     private RelativeLayout loadingView;
     private RelativeLayout relativeLayout1;
 
-    private EditText passText;
-    private EditText loginText;
     private Button loginBtn;
 
-    private User user;
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        receiver.setReceiver(null);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        receiver = new ExecuteResultReceiver(new Handler());
+        receiver.setReceiver(this);
 
-        user = new User();
-        SharedPreferences preferences = getSharedPreferences(App.SHARED_PREFERENCES, Context.MODE_PRIVATE);
-
-        final String accessToken = preferences.getString(App.PREF_ACCESS_TOKEN, null);
-        final String tokenSecret = preferences
-                .getString(App.PREF_TOKEN_SECRET, null);
-
-        if (null != accessToken && null != tokenSecret) {
-            onSuccess(new AccessToken(accessToken, tokenSecret));
-        }
+        final Intent intent = new Intent(Intent.ACTION_SYNC, null, this, ExecuteService.class);
+        intent.putExtra("receiver", receiver);
+        intent.putExtra("command", "execute");
 
         loginBtn = (Button) findViewById(R.id.login_btn);
         loadingView = (RelativeLayout) findViewById(R.id.loadingView);
-        loginText = (EditText) findViewById(R.id.login_email);
-        passText = (EditText) findViewById(R.id.login_password);
         relativeLayout1 = (RelativeLayout) findViewById(R.id.relativeLayout1);
 
         loginBtn.setOnClickListener(new View.OnClickListener() {
@@ -68,33 +57,9 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onClick(View v) {
                 showSpinner();
-                final XAuth500pxTask loginTask = new XAuth500pxTask(
-                        MainActivity.this);
-                loginTask.execute(getString(R.string.px_consumer_key),
-                        getString(R.string.px_consumer_secret), loginText
-                                .getText().toString(), passText.getText()
-                                .toString());
+                startService(intent);
             }
         });
-    }
-
-    @Override
-    public void onSuccess(AccessToken result) {
-//        showSpinner();
-
-        SharedPreferences preferences = getSharedPreferences(App.SHARED_PREFERENCES, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(App.PREF_ACCESS_TOKEN, result.getToken());
-        editor.putString(App.PREF_TOKEN_SECRET, result.getTokenSecret());
-        editor.apply();
-
-
-        final PxApi api = new PxApi(result,
-                getString(R.string.px_consumer_key),
-                getString(R.string.px_consumer_secret));
-
-        new UserDetailTask(this).execute(api);
-
     }
 
     private void showSpinner() {
@@ -109,48 +74,36 @@ public class MainActivity extends AppCompatActivity implements
         relativeLayout1.setDescendantFocusability(ViewGroup.FOCUS_BEFORE_DESCENDANTS);
     }
 
-    @Override
-    public void onSuccess(JSONObject user) {
-        try {
-            this.user.fullName = user.getString("fullName");
-            Toast.makeText(MainActivity.this,
-                    this.user.fullName + ", You access is Granted!", Toast.LENGTH_LONG)
-                    .show();
-            moveToGallery();
-
-            Timber.i("get Oauth information");
-        } catch (JSONException e) {
-            Timber.e(e);
-        }
-        hideSpinner();
-
-
-    }
-
-    @Override
-    public void onFail() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                hideSpinner();
-                Toast.makeText(MainActivity.this,
-                        "Login Failed, please try again.", Toast.LENGTH_LONG)
-                        .show();
-
-            }
-        });
-
-    }
-
-    @Override
-    public void onFail(FiveHundredException e) {
-        onFail();
-    }
-
     public void moveToGallery() {
-        Intent intent = App.graph().navigation().galleryActivity(this);
+        Intent intent = new Intent(this, PhotosGalleryActivity.class);
         startActivity(intent);
         finish();
     }
 
+    @Override
+    public void onReceiveResult(int resultCode, Bundle resultData) {
+        hideSpinner();
+        switch (resultCode) {
+            case STATUS_RUNNING:
+                showSpinner();
+                break;
+            case STATUS_SUCCESSFUL:
+                hideSpinner();
+                Toast.makeText(MainActivity.this,
+                        ", You have got Data ", Toast.LENGTH_LONG)
+                        .show();
+                moveToGallery();
+                break;
+            case STATUS_FAILED:
+                hideSpinner();
+                Toast.makeText(MainActivity.this,
+                        "Some Error was happened! ", Toast.LENGTH_LONG)
+                        .show();
+                break;
+            default:
+                break;
+        }
+
+
+    }
 }

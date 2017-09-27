@@ -52,5 +52,6 @@ ext {
             rxandroid   : '2.0.1',
             multidex    : '1.0.1',
             crashlytics : "2.6.8",
+            retrofit    : '2.3.0'
     ]
 }

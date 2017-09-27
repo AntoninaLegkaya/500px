@@ -13,7 +13,7 @@ apply plugin: 'io.fabric'
 apply from: "$project.rootDir/tools/build-utils.gradle"
 apply from: "$project.rootDir/keystore/signing-config.gradle"
 apply from: "$project.rootDir/tools/script-findbugs.gradle"
-//apply from: "$project.rootDir/tools/script-checkstyle.gradle"
+apply from: "$project.rootDir/tools/script-checkstyle.gradle"
 apply from: "$project.rootDir/tools/script-lint.gradle"
 apply from: "$project.rootDir/tools/script-pmd.gradle"
 
@@ -22,15 +22,13 @@ repositories {
     maven { url 'https://maven.fabric.io/public' }
 }
 
+
 android {
+
 
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion "$rootProject.ext.buildToolsVersion"
 
-//    sourceSets.main {
-//        jni.srcDirs = []
-//        jniLibs.srcDir "$SDK_DIR/$NATIVE_LIB_DIR/"
-//    }
     defaultConfig {
         applicationId "com.dbbest.a500px"
         minSdkVersion 21
@@ -38,6 +36,7 @@ android {
         versionCode buildVersionNumber
         versionName buildVersionName
         multiDexEnabled true
+        buildConfigField('String',  API_SERVER_ENDPOINT, "\"https://api.500px.com/\"")
     }
     buildTypes {
         debug {
@@ -52,6 +51,8 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
+
     }
 
 
@@ -84,7 +85,6 @@ configurations {
 }
 dependencies {
 
-//    compile fileTree(include: ['*.jar'], dir: 'libs')
 
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
@@ -100,22 +100,20 @@ dependencies {
     }
     compile "com.facebook.stetho:stetho:$lib.stetho"
     compile "com.facebook.stetho:stetho-okhttp3:$lib.stetho"
+    compile "com.squareup.okhttp3:logging-interceptor:$lib.okhttp"
+
     compile "com.jakewharton.timber:timber:$lib.timber"
     compile 'com.google.code.findbugs:annotations:3.0.1u2'
 
-//    compile files("$SDK_DIR/$JAR_DIR/javax.inject-1.jar")
-//    compile files("$SDK_DIR/$JAR_DIR/roboguice-2.0.jar")
+    compile "com.squareup.retrofit2:retrofit:$lib.retrofit"
+    compile "com.squareup.retrofit2:converter-gson:$lib.retrofit"
 
-//    compile files("$SDK_DIR/$JAR_DIR/guice-3.0-no_aop.jar")
-    compile files("$SDK_DIR/$JAR_DIR/httpclient-4.5.3.jar")
-//    compile files("$SDK_DIR/$JAR_DIR/httpcore-4.4.6.jar")
-
-    compile 'oauth.signpost:signpost-core:1.2.1.2'
-    compile 'oauth.signpost:signpost-commonshttp4:1.2.1.2'
-    compile('org.apache.httpcomponents:httpcore:4.4.6') {
-        exclude group: 'org.apache.httpcomponents', module: 'httpclient'
-
-    }
-//    compile files('/home/antonina/Projects/500px/libs/httpclient-4.5.3.jar')
-//    compile files('/home/antonina/Projects/500px/libs/httpcore-4.4.6.jar')
+//    compile files("$SDK_DIR/$JAR_DIR/httpclient-4.5.3.jar")
+//
+//    compile 'oauth.signpost:signpost-core:1.2.1.2'
+//    compile 'oauth.signpost:signpost-commonshttp4:1.2.1.2'
+//    compile('org.apache.httpcomponents:httpcore:4.4.6') {
+//        exclude group: 'org.apache.httpcomponents', module: 'httpclient'
+//
+//    }
 }

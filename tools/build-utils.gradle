@@ -3,7 +3,7 @@ def buildMajorVersion = 0 //Major version of application - not back support with
 def buildMinorVersion = 0 //Minor version of application - has partial or full back support with previous versions
 // (Partially different, major bug fixes)
 def buildPatchVersion = buildNumberInt() - lastBuildNumberUpdate //Patch version of application - has full back support with previous versions
-def   SERVER_ENDPOINT = "\"https://api.500px.com/\""
+def  SERVER_ENDPOINT = "\"https://api.500px.com/\""
 def buildNumberInt() {
     if (project.hasProperty('buildNumber')) {
         return Integer.parseInt(buildNumber)
@@ -31,18 +31,14 @@ ext {
     TYPE_STRING = "String"
     TYPE_BOOLEAN = "boolean"
 
-    VARIABLE_API_SERVER_ENDPOINT = "SERVER_ENDPOINT"
-
-    KEY_STORIES_ENDPOINT = "ENDPOINT_STORIES"
-    KEY_STORIES_API_KEY = "API_KEY_STORIES"
-    KEY_IS_DEV_BUILD = "IS_DEV_BUILD"
 
     SDK_DIR = '..'
     NATIVE_LIB_DIR = 'libs'
     JAR_DIR = 'libs'
 
+    SERVER_ENDPOINT = "\"https://api.500px.com/\""
 
-    API_SERVER_ENDPOINT = SERVER_ENDPOINT
+    API_SERVER_ENDPOINT = 'API_SERVER_ENDPOINT'
 
 
 }

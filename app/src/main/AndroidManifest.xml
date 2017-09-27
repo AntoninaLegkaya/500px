@@ -38,7 +38,7 @@
             android:name="io.fabric.ApiKey"
             android:value="338ed8091de5a9dbdca2edb8cf91a867ce7f3c25"/>
         <service
-            android:name=".net.service.DownloadService"
+            android:name=".net.service.ExecuteService"
             android:exported="false"/>
 
     </application>
