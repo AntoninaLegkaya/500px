@@ -3,6 +3,7 @@ package com.dbbest.a500px.net.retrofit;
 import android.text.TextUtils;
 
 import com.dbbest.a500px.BuildConfig;
+import com.dbbest.a500px.net.model.ListPhotos;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -23,7 +24,6 @@ import timber.log.Timber;
 
 public class RestClient {
 
-    private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     private final RestService restService;
 
     public RestClient() {
@@ -36,6 +36,7 @@ public class RestClient {
         builder.addNetworkInterceptor(new StethoInterceptor());
         OkHttpClient okHttpClient = builder.build();
         Gson gson = new GsonBuilder()
+                .setLenient()
                 .create();
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -51,9 +52,9 @@ public class RestClient {
         return executeCall(restService.getPhotos(consumeKey, page, count));
     }
 
-   private Object executeCall(Call<Object> call) {
+   private Object executeCall(Call<ListPhotos> call) {
         try {
-            Response<Object> response = call.execute();
+            Response<ListPhotos> response = call.execute();
             if (!response.isSuccessful()) {
                 Timber.w("Unsuccessful response code: %d message: %s", response.code(), response.message());
 

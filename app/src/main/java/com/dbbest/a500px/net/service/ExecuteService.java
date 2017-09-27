@@ -7,12 +7,16 @@ import android.support.annotation.Nullable;
 import android.support.v4.os.ResultReceiver;
 
 import com.dbbest.a500px.R;
+import com.dbbest.a500px.net.model.ListPhotos;
+import com.dbbest.a500px.net.model.Photo;
 import com.dbbest.a500px.net.retrofit.RestClient;
+
+import timber.log.Timber;
 
 import static android.app.DownloadManager.STATUS_FAILED;
 import static android.app.DownloadManager.STATUS_RUNNING;
 import static android.app.DownloadManager.STATUS_SUCCESSFUL;
-@SuppressWarnings("")
+
 public class ExecuteService extends IntentService {
 
 
@@ -31,14 +35,16 @@ public class ExecuteService extends IntentService {
                 receiver.send(STATUS_RUNNING, Bundle.EMPTY);
                 try {
                     RestClient restClient = new RestClient();
-                    Object results = restClient.getPhotos(getApplicationContext().getString(R.string.px_consumer_key), 1, 3);
-                    bundle.putString("results", results.toString());
+                    ListPhotos results = (ListPhotos) restClient.getPhotos(getApplicationContext().getString(R.string.px_consumer_key), 1, 3);
+                    for (Photo photo : results.getPhotos()) {
+                        Timber.i("User name: %s", photo.getUser().getFullname());
+                    }
+                    bundle.putInt("results", results.getTotalItems().intValue());
                     receiver.send(STATUS_SUCCESSFUL, bundle);
                 } catch (Exception e) {
                     bundle.putString(Intent.EXTRA_TEXT, e.toString());
                     receiver.send(STATUS_FAILED, bundle);
                 }
-
             }
         }
     }

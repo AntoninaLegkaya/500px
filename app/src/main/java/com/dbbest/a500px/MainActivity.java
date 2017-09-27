@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements
             case STATUS_SUCCESSFUL:
                 hideSpinner();
                 Toast.makeText(MainActivity.this,
-                        ", You have got Data ", Toast.LENGTH_LONG)
+                        ",You have got Data  count photo: "+resultData.getInt("results"), Toast.LENGTH_LONG)
                         .show();
                 moveToGallery();
                 break;
