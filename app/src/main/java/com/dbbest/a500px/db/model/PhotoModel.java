@@ -39,4 +39,5 @@ public class PhotoModel implements ContentEntry {
         values.put(PhotoColumns.USER_ID, user_id);
         return values;
     }
+
 }

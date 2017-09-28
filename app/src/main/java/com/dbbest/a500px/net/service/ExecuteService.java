@@ -41,7 +41,7 @@ public class ExecuteService extends IntentService {
                 receiver.send(STATUS_RUNNING, Bundle.EMPTY);
                 try {
                     RestClient restClient = new RestClient();
-                    ListPhotos results = (ListPhotos) restClient.getPhotos(getApplicationContext().getString(R.string.px_consumer_key), 1, 3);
+                    ListPhotos results = (ListPhotos) restClient.getPhotos(getApplicationContext().getString(R.string.px_consumer_key), 1, 10);
 
                     List<UserModel> userToSave = new ArrayList<>();
                     List<PhotoModel> photosToSave = new ArrayList<>();
@@ -53,15 +53,14 @@ public class ExecuteService extends IntentService {
                         photosToSave.add(photoModel);
                         Timber.i("Photo id: %d", photoModel.getId());
                         Timber.i("User name: %s", userModel.getName());
+                        Timber.i("Photo count: %d", photosToSave.size());
                     }
 
-//                    if (offset == 0) {
-//                    App.instance().processor().repository().photo().removeAll();
-//                    App.processor().repository().user().removeAll();
-//                    }
 
-                    App.processor().repository().photo().bulk(photosToSave);
-//                    App.processor().repository().user().bulk(userToSave);
+                    int i = App.processor().repository().photo().bulk(photosToSave);
+                    Timber.i("Inserted photos i: %d", i);
+                    int j = App.processor().repository().user().bulk(userToSave);
+                    Timber.i("Inserted user j: %d", j);
 
                     receiver.send(STATUS_SUCCESSFUL, Bundle.EMPTY);
                 } catch (Exception e) {

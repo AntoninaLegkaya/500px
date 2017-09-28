@@ -4,15 +4,16 @@ import android.net.Uri;
 
 import com.dbbest.a500px.BuildConfig;
 
+import net.simonvt.schematic.annotation.ContentProvider;
 import net.simonvt.schematic.annotation.ContentUri;
 import net.simonvt.schematic.annotation.TableEndpoint;
 
 @SuppressWarnings({"PMD.UseUtilityClass", "PMD.UncommentedEmptyConstructor",
         "PMD.ConstantsInInterface", "PMD.AvoidConstantsInterface"})
-//@ContentProvider(authority = ProviderDefinition.AUTHORITY,
-//        database = DatabaseDefinition.class,
-//        packageName = "com.dbbest.a500px.db",
-//        name = "AppContentProvider")
+@ContentProvider(authority = ProviderDefinition.AUTHORITY,
+        database = DatabaseDefinition.class,
+        packageName = "com.dbbest.a500px.db",
+        name = "AppContentProvider")
 public class ProviderDefinition {
     public static final String AUTHORITY = BuildConfig.APPLICATION_ID + ".provider.AppContentProvider";
     private static final Uri BASE_CONTENT_URI = Uri.parse("content://" + AUTHORITY);

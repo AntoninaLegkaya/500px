@@ -12,7 +12,7 @@ import net.simonvt.schematic.annotation.OnUpgrade;
 import net.simonvt.schematic.annotation.Table;
 @SuppressWarnings({"PMD.UseUtilityClass", "PMD.UncommentedEmptyConstructor", "PMD.AvoidDuplicateLiterals"})
 @Database(version = DatabaseDefinition.VERSION, packageName = "com.dbbest.a500px.db",
-        className = "AppDatabase", fileName = DatabaseDefinition.DATABASE_NAME)
+        className = "ApplicationDatabase", fileName = DatabaseDefinition.DATABASE_NAME)
 public class DatabaseDefinition {
     static final String DATABASE_NAME = "500px";
     static final int VERSION = 1;

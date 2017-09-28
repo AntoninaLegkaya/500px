@@ -79,7 +79,7 @@ abstract class ContentRepository<V extends ContentEntry> implements Repository<V
         }
         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
         for (V entry : entries) {
-
+            Timber.i("Entry  id: %d", entry.getId());
             ContentProviderOperation operation;
             if (exists(entry)) {
                 ContentValues values = entry.values();
@@ -91,7 +91,7 @@ abstract class ContentRepository<V extends ContentEntry> implements Repository<V
                         .withValues(entry.values())
                         .build();
             } else {
-                operation = ContentProviderOperation.newUpdate(uri())
+                operation = ContentProviderOperation.newInsert(uri())
                         .withValues(entry.values())
                         .build();
             }
