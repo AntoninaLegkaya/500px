@@ -3,7 +3,7 @@ package com.dbbest.a500px.db.repository;
 import java.util.List;
 
 public interface Repository<V> {
-    boolean exists(String id);
+    boolean exists(Integer id);
 
     boolean exists(V entry);
 
@@ -11,13 +11,13 @@ public interface Repository<V> {
 
     int remove(V entry);
 
-    int remove(String id);
+    int remove(Integer id);
 
     int removeBatch(String where, Object... args);
 
     boolean put(V entry);
 
-    V get(String id);
+    V get(Integer id);
 
     List<V> select(String where, Object... args);
 

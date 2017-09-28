@@ -1,4 +1,4 @@
-package com.dbbest.a500px.db;
+package com.dbbest.a500px.db.repository;
 
 import net.simonvt.schematic.annotation.ConflictResolutionType;
 import net.simonvt.schematic.annotation.DataType;
@@ -8,7 +8,7 @@ import net.simonvt.schematic.annotation.PrimaryKey;
 public interface BaseColumns {
 
     @PrimaryKey(onConflict = ConflictResolutionType.REPLACE)
-    @DataType(DataType.Type.TEXT)
+    @DataType(DataType.Type.INTEGER)
     String ID = "_id";
 
 }

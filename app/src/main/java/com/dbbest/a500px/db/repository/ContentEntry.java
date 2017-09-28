@@ -4,7 +4,7 @@ import android.content.ContentValues;
 
 public interface ContentEntry {
 
-    String getId();
+    Integer getId();
 
     ContentValues values();
 }

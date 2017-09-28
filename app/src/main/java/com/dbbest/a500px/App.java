@@ -33,4 +33,8 @@ public class App extends MultiDexApplication {
         Timber.plant(new Timber.DebugTree());
 
     }
+
+    public static DataProcessor processor() {
+        return DataProcessor.instance();
+    }
 }

@@ -4,12 +4,13 @@ package com.dbbest.a500px.db;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.dbbest.a500px.db.repository.PhotoColumns;
 import com.dbbest.a500px.db.repository.UserColumns;
 
 import net.simonvt.schematic.annotation.Database;
 import net.simonvt.schematic.annotation.OnUpgrade;
 import net.simonvt.schematic.annotation.Table;
-
+@SuppressWarnings({"PMD.UseUtilityClass", "PMD.UncommentedEmptyConstructor", "PMD.AvoidDuplicateLiterals"})
 @Database(version = DatabaseDefinition.VERSION, packageName = "com.dbbest.a500px.db",
         className = "AppDatabase", fileName = DatabaseDefinition.DATABASE_NAME)
 public class DatabaseDefinition {
@@ -26,7 +27,7 @@ public class DatabaseDefinition {
         db.execSQL("DROP TABLE IF EXISTS " + PHOTO_TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + USER_TABLE);
 
-        com.dbbest.a500px.db.AppDatabase.getInstance(context).onCreate(db);
+        ApplicationDatabase.getInstance(context).onCreate(db);
     }
 
     /**

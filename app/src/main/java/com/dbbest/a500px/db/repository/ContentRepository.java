@@ -10,7 +10,6 @@ import android.os.RemoteException;
 import android.support.annotation.Nullable;
 
 import com.dbbest.a500px.App;
-import com.dbbest.a500px.db.BaseColumns;
 import com.dbbest.a500px.db.DBUtil;
 import com.dbbest.a500px.db.ProviderDefinition;
 
@@ -27,8 +26,8 @@ abstract class ContentRepository<V extends ContentEntry> implements Repository<V
     }
 
     @Override
-    public boolean exists(String id) {
-        Cursor cursor = resolver().query(uri(), null, BaseColumns.ID + "=?", new String[]{id}, null);
+    public boolean exists(Integer id) {
+        Cursor cursor = resolver().query(uri(), null, BaseColumns.ID + "=?", new String[]{String.valueOf(id)}, null);
         boolean result = cursor != null && cursor.getCount() > 0;
         closeCursor(cursor);
         return result;
@@ -55,8 +54,8 @@ abstract class ContentRepository<V extends ContentEntry> implements Repository<V
     }
 
     @Override
-    public int remove(String id) {
-        return resolver().delete(uri(), BaseColumns.ID + "=?", new String[]{id});
+    public int remove(Integer id) {
+        return resolver().delete(uri(), BaseColumns.ID + "=?", new String[]{String.valueOf(id)});
     }
 
     @Override
@@ -128,8 +127,8 @@ abstract class ContentRepository<V extends ContentEntry> implements Repository<V
         }
     }
 
-    Cursor getEntryAsCursor(String id) {
-        return resolver().query(uri(), null, BaseColumns.ID + "=?", new String[]{id}, null);
+    Cursor getEntryAsCursor(Integer id) {
+        return resolver().query(uri(), null, BaseColumns.ID + "=?", new String[]{String.valueOf(id)}, null);
     }
 
     Cursor getEntryListAsCursor(String where, Object... args) {

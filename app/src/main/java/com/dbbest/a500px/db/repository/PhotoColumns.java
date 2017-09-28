@@ -1,4 +1,4 @@
-package com.dbbest.a500px.db;
+package com.dbbest.a500px.db.repository;
 
 import net.simonvt.schematic.annotation.DataType;
 

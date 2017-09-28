@@ -41,6 +41,13 @@
             android:name=".net.service.ExecuteService"
             android:exported="false"/>
 
+        <provider
+            android:name=".db.AppContentProvider"
+            android:authorities="${applicationId}.provider.AppContentProvider"
+            android:exported="false"/>
+
     </application>
+
+
 
 </manifest>
