@@ -30,6 +30,7 @@ public class ProviderDefinition {
     interface Path {
         String PHOTO = "photo";
         String USER = "user";
+        String AVATARS = "avatars";
     }
 
     @TableEndpoint(table = DatabaseDefinition.PHOTO_TABLE)
@@ -48,5 +49,13 @@ public class ProviderDefinition {
                 type = VND_HMNI_ITEM + Path.USER
         )
         public static final Uri URI = buildUri(Path.USER);
+    }
+    @TableEndpoint(table = DatabaseDefinition.AVATARS_TABLE)
+    public static class AvatarsEntry {
+        @ContentUri(
+                path = Path.AVATARS,
+                type = VND_HMNI_ITEM + Path.AVATARS
+        )
+        public static final Uri URI = buildUri(Path.AVATARS);
     }
 }

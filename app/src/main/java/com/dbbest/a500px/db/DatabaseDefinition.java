@@ -4,6 +4,7 @@ package com.dbbest.a500px.db;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.dbbest.a500px.db.repository.AvatarsColumns;
 import com.dbbest.a500px.db.repository.PhotoColumns;
 import com.dbbest.a500px.db.repository.UserColumns;
 
@@ -15,17 +16,20 @@ import net.simonvt.schematic.annotation.Table;
         className = "ApplicationDatabase", fileName = DatabaseDefinition.DATABASE_NAME)
 public class DatabaseDefinition {
     static final String DATABASE_NAME = "500px";
-    static final int VERSION = 1;
+    static final int VERSION = 3;
 
     @Table(PhotoColumns.class)
-    static final String PHOTO_TABLE = "photo";
+    public static final String PHOTO_TABLE = "photo";
     @Table(UserColumns.class)
-    static final String USER_TABLE = "user";
+    public static final String USER_TABLE = "user";
+    @Table(AvatarsColumns.class)
+    static final String AVATARS_TABLE = "avatars";
 
     @OnUpgrade
     static void onUpgrade(Context context, SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + PHOTO_TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + USER_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + AVATARS_TABLE);
 
         ApplicationDatabase.getInstance(context).onCreate(db);
     }

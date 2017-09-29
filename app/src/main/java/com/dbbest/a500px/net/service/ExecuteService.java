@@ -8,6 +8,7 @@ import android.support.v4.os.ResultReceiver;
 
 import com.dbbest.a500px.App;
 import com.dbbest.a500px.R;
+import com.dbbest.a500px.db.model.AvatarsModel;
 import com.dbbest.a500px.db.model.PhotoModel;
 import com.dbbest.a500px.db.model.UserModel;
 import com.dbbest.a500px.net.model.ListPhotos;
@@ -16,8 +17,6 @@ import com.dbbest.a500px.net.retrofit.RestClient;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import timber.log.Timber;
 
 import static android.app.DownloadManager.STATUS_FAILED;
 import static android.app.DownloadManager.STATUS_RUNNING;
@@ -45,22 +44,19 @@ public class ExecuteService extends IntentService {
 
                     List<UserModel> userToSave = new ArrayList<>();
                     List<PhotoModel> photosToSave = new ArrayList<>();
+                    List<AvatarsModel> avatarsToSave = new ArrayList<>();
 
                     for (Photo photo : results.getPhotos()) {
                         PhotoModel photoModel = new PhotoModel(photo);
                         UserModel userModel = new UserModel(photo.getUser());
                         userToSave.add(userModel);
                         photosToSave.add(photoModel);
-                        Timber.i("Photo id: %d", photoModel.getId());
-                        Timber.i("User name: %s", userModel.getName());
-                        Timber.i("Photo count: %d", photosToSave.size());
+                        AvatarsModel avatarsModel = new AvatarsModel(photo.getUser().getAvatars(), userModel.getId());
+                        avatarsToSave.add(avatarsModel);
                     }
-
-
-                    int i = App.processor().repository().photo().bulk(photosToSave);
-                    Timber.i("Inserted photos i: %d", i);
-                    int j = App.processor().repository().user().bulk(userToSave);
-                    Timber.i("Inserted user j: %d", j);
+                    App.processor().repository().photo().bulk(photosToSave);
+                    App.processor().repository().user().bulk(userToSave);
+                    App.processor().repository().avatars().bulk(avatarsToSave);
 
                     receiver.send(STATUS_SUCCESSFUL, Bundle.EMPTY);
                 } catch (Exception e) {
