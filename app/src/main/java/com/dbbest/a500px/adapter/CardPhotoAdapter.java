@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.dbbest.a500px.App;
 import com.dbbest.a500px.R;
 import com.dbbest.a500px.db.ProviderDefinition;
@@ -86,6 +87,7 @@ public class CardPhotoAdapter extends BaseRecycleViewCursorAdapter<CardPhotoAdap
             return null;
         }
 
+
     }
 
     static class PhotoViewHolder extends RecyclerView.ViewHolder {
@@ -103,9 +105,27 @@ public class CardPhotoAdapter extends BaseRecycleViewCursorAdapter<CardPhotoAdap
         }
 
         void bind(CardModel card) {
-                Timber.i("Set name %s", card.getNameUser());
-                name.setText(card.getNameUser());
+            name.setText(card.getNameUser());
+            onAvatarSet(card.getAvatars().getDefaultUrl(), avatar);
+            onPhotoSet(card.imageUrl, photo);
 
         }
+
+        void onAvatarSet(String fullPreviewUrl, ImageView previewView) {
+
+            Glide.with(previewView.getContext())
+                    .load(fullPreviewUrl)
+                    .placeholder(R.drawable.ic_user_places_holder)
+                    .into(previewView);
+        }
+
+        void onPhotoSet(String fullPreviewUrl, ImageView previewView) {
+
+            Glide.with(previewView.getContext())
+                    .load(fullPreviewUrl)
+                    .placeholder(R.drawable.ic_empty)
+                    .into(previewView);
+        }
+
     }
 }

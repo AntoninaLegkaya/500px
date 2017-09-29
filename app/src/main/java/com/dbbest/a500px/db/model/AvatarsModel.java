@@ -39,8 +39,25 @@ public class AvatarsModel implements ContentEntry {
     }
 
 
+    public String getDefaultUrl() {
+        return defaultUrl;
+    }
+
+    public String getLargeUrl() {
+        return largeUrl;
+    }
+
+    public String getSmallUrl() {
+        return smallUrl;
+    }
+
+    public String getTinyUrl() {
+        return tinyUrl;
+    }
+
     @Override
     public ContentValues values() {
+
         ContentValues values = new ContentValues();
         values.put(AvatarsColumns.ID, id);
         values.put(AvatarsColumns.URL_DEFAULT, defaultUrl);

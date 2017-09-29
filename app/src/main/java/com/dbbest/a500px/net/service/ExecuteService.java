@@ -40,7 +40,10 @@ public class ExecuteService extends IntentService {
                 receiver.send(STATUS_RUNNING, Bundle.EMPTY);
                 try {
                     RestClient restClient = new RestClient();
-                    ListPhotos results = (ListPhotos) restClient.getPhotos(getApplicationContext().getString(R.string.px_consumer_key), 1, 10);
+                    int count = intent.getIntExtra("count", 1);
+                    int page = intent.getIntExtra("page", 1);
+
+                    ListPhotos results = (ListPhotos) restClient.getPhotos(getApplicationContext().getString(R.string.px_consumer_key), page, count);
 
                     List<UserModel> userToSave = new ArrayList<>();
                     List<PhotoModel> photosToSave = new ArrayList<>();

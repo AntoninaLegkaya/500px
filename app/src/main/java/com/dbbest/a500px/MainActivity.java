@@ -47,6 +47,8 @@ public class MainActivity extends AppCompatActivity implements
         final Intent intent = new Intent(Intent.ACTION_SYNC, null, this, ExecuteService.class);
         intent.putExtra("receiver", receiver);
         intent.putExtra("command", "execute");
+        intent.putExtra("page", 1);
+        intent.putExtra("count", 3);
 
         loginBtn = (Button) findViewById(R.id.login_btn);
         loadingView = (RelativeLayout) findViewById(R.id.loadingView);
@@ -56,6 +58,10 @@ public class MainActivity extends AppCompatActivity implements
 
             @Override
             public void onClick(View v) {
+
+                App.processor().repository().photo().removeAll();
+                App.processor().repository().user().removeAll();
+                App.processor().repository().avatars().removeAll();
                 showSpinner();
                 startService(intent);
             }
@@ -90,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements
             case STATUS_SUCCESSFUL:
                 hideSpinner();
                 Toast.makeText(MainActivity.this,
-                        ",You have got Data  count photo: "+resultData.getInt("results"), Toast.LENGTH_LONG)
+                        "Success!" , Toast.LENGTH_LONG)
                         .show();
                 moveToGallery();
                 break;
