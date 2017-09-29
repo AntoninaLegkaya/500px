@@ -7,7 +7,7 @@ import net.simonvt.schematic.annotation.DataType;
 import net.simonvt.schematic.annotation.ForeignKeyConstraint;
 
 @SuppressWarnings({"PMD.ConstantsInInterface", "PMD.AvoidConstantsInterface"})
-@ForeignKeyConstraint(columns = PhotoColumns.USER_ID, referencedTable = DatabaseDefinition.PHOTO_TABLE, referencedColumns = UserColumns.ID,
+@ForeignKeyConstraint(columns = PhotoColumns.USER_ID, referencedTable = DatabaseDefinition.USER_TABLE, referencedColumns = UserColumns.ID,
         onConflict = ConflictResolutionType.REPLACE)
 public interface PhotoColumns extends BaseColumns {
 

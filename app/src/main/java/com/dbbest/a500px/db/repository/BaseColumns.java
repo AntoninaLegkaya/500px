@@ -8,7 +8,7 @@ import net.simonvt.schematic.annotation.PrimaryKey;
 public interface BaseColumns {
 
     @PrimaryKey(onConflict = ConflictResolutionType.REPLACE)
-    @DataType(DataType.Type.INTEGER)
+    @DataType(DataType.Type.TEXT)
     String ID = "_id";
 
 }

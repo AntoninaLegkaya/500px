@@ -12,18 +12,22 @@ public class PhotoModel implements ContentEntry {
 
     private final Integer id;
     private final Integer user_id;
-    private final String image_url;
+    private final String imageUrl;
 
     public PhotoModel(Cursor cursor) {
         id = DBUtil.getInteger(cursor, PhotoColumns.ID);
         user_id = DBUtil.getInteger(cursor, PhotoColumns.USER_ID);
-        image_url =DBUtil.getString(cursor,PhotoColumns.IMAGE_URL);
+        imageUrl = DBUtil.getString(cursor, PhotoColumns.IMAGE_URL);
     }
 
     public PhotoModel(Photo photo) {
         this.id = photo.getId();
         this.user_id = photo.getUserId();
-        this.image_url =photo.getImageUrl();
+        this.imageUrl = photo.getImageUrl();
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
     }
 
     @Override
@@ -31,7 +35,7 @@ public class PhotoModel implements ContentEntry {
         return id;
     }
 
-    public Integer getUser_id() {
+    public Integer getUserId() {
         return user_id;
     }
 
@@ -40,7 +44,7 @@ public class PhotoModel implements ContentEntry {
         ContentValues values = new ContentValues();
         values.put(PhotoColumns.ID, id);
         values.put(PhotoColumns.USER_ID, user_id);
-        values.put(PhotoColumns.IMAGE_URL, image_url);
+        values.put(PhotoColumns.IMAGE_URL, imageUrl);
         return values;
     }
 
