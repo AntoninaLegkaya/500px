@@ -1,5 +1,6 @@
 package com.dbbest.a500px.net.service;
 
+import android.annotation.SuppressLint;
 import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import static android.app.DownloadManager.STATUS_FAILED;
 import static android.app.DownloadManager.STATUS_RUNNING;
 import static android.app.DownloadManager.STATUS_SUCCESSFUL;
 
+@SuppressLint("RestrictedApi")
 public class ExecuteService extends IntentService {
 
 
@@ -36,7 +38,7 @@ public class ExecuteService extends IntentService {
             final ResultReceiver receiver = intent.getParcelableExtra("receiver");
             String command = intent.getStringExtra("command");
             Bundle bundle = new Bundle();
-            if (command.equals("execute")) {
+            if (("execute").equals(command)) {
                 receiver.send(STATUS_RUNNING, Bundle.EMPTY);
                 try {
                     RestClient restClient = new RestClient();

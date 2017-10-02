@@ -11,18 +11,18 @@ import com.dbbest.a500px.net.model.Photo;
 public class PhotoModel implements ContentEntry {
 
     private final Integer id;
-    private final Integer user_id;
+    private final Integer userId;
     private final String imageUrl;
 
     public PhotoModel(Cursor cursor) {
         id = DBUtil.getInteger(cursor, PhotoColumns.ID);
-        user_id = DBUtil.getInteger(cursor, PhotoColumns.USER_ID);
+        userId = DBUtil.getInteger(cursor, PhotoColumns.USER_ID);
         imageUrl = DBUtil.getString(cursor, PhotoColumns.IMAGE_URL);
     }
 
     public PhotoModel(Photo photo) {
         this.id = photo.getId();
-        this.user_id = photo.getUserId();
+        this.userId = photo.getUserId();
         this.imageUrl = photo.getImageUrl();
     }
 
@@ -36,14 +36,14 @@ public class PhotoModel implements ContentEntry {
     }
 
     public Integer getUserId() {
-        return user_id;
+        return userId;
     }
 
     @Override
     public ContentValues values() {
         ContentValues values = new ContentValues();
         values.put(PhotoColumns.ID, id);
-        values.put(PhotoColumns.USER_ID, user_id);
+        values.put(PhotoColumns.USER_ID, userId);
         values.put(PhotoColumns.IMAGE_URL, imageUrl);
         return values;
     }

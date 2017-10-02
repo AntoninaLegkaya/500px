@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,11 +26,11 @@ import static android.app.DownloadManager.STATUS_SUCCESSFUL;
 public class PhotosGalleryActivity extends AppCompatActivity implements
         ExecuteResultReceiver.Receiver {
 
+    private static final int DOWNLOAD_LIMIT = 2;
     private static final int VISIBLE_THRESHOLD = 3;
     private CardPhotoAdapter adapter;
     private ExecuteResultReceiver receiver;
     private TextView infoView;
-    private RelativeLayout loadingView;
     private int page = 0;
     private boolean loading = false;
 
@@ -41,7 +40,7 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
         receiver = new ExecuteResultReceiver(new Handler());
         receiver.setReceiver(this);
 
-        if (IsEmptyCursor()) {
+        if (isEmptyCursor()) {
             buildServiceCommand();
         }
 
@@ -60,7 +59,6 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_gallery);
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler);
         infoView = (TextView) findViewById(R.id.text_info);
-        loadingView = (RelativeLayout) findViewById(R.id.loadingView);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -73,7 +71,7 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
                 if (!loading && totalItemCount <= (lastVisibleItemPosition + VISIBLE_THRESHOLD)) {
                     page = page + 1;
                     buildServiceCommand();
-                    loading=true;
+                    loading = true;
                 }
             }
         });
@@ -86,12 +84,11 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
         intent.putExtra("receiver", receiver);
         intent.putExtra("command", "execute");
         intent.putExtra("page", page);
-        int DOWNLOAD_LIMIT = 2;
         intent.putExtra("count", DOWNLOAD_LIMIT);
         startService(intent);
     }
 
-    private boolean IsEmptyCursor() {
+    private boolean isEmptyCursor() {
         boolean isEmpty = true;
         Cursor cursor = App.instance().getContentResolver().query(ProviderDefinition.PhotoEntry.URI, null, null, null, null);
         if (cursor != null) {
@@ -110,22 +107,20 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
 
     @Override
     public void onReceiveResult(int resultCode, Bundle resultData) {
-        hideSpinner();
+//        hideSpinner();
         switch (resultCode) {
             case STATUS_RUNNING:
                 break;
             case STATUS_SUCCESSFUL:
-                hideSpinner();
                 infoView.setVisibility(View.GONE);
-                IsEmptyCursor();
-                loading=false;
+                isEmptyCursor();
+                loading = false;
                 break;
             case STATUS_FAILED:
-                hideSpinner();
                 Toast.makeText(PhotosGalleryActivity.this,
                         "Some Error was happened! ", Toast.LENGTH_LONG)
                         .show();
-                loading=false;
+                loading = false;
                 break;
             default:
                 break;
@@ -134,13 +129,13 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
 
     }
 
-    private void showSpinner() {
-        loadingView.setVisibility(View.VISIBLE);
-    }
-
-    private void hideSpinner() {
-        loadingView.setVisibility(View.GONE);
-    }
+//    private void showSpinner() {
+//        loadingView.setVisibility(View.VISIBLE);
+//    }
+//
+//    private void hideSpinner() {
+//        loadingView.setVisibility(View.GONE);
+//    }
 
     @Override
     public void onLowMemory() {

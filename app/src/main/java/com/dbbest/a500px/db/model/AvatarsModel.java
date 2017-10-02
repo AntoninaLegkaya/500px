@@ -25,8 +25,8 @@ public class AvatarsModel implements ContentEntry {
         tinyUrl = DBUtil.getString(cursor, AvatarsColumns.URL_TINY);
     }
 
-    public AvatarsModel(Avatars avatar, Integer user_id) {
-        this.id = user_id;
+    public AvatarsModel(Avatars avatar, Integer userId) {
+        this.id = userId;
         this.defaultUrl = avatar.getDefault().getHttps();
         this.largeUrl = avatar.getLarge().getHttps();
         smallUrl = avatar.getSmall().getHttps();

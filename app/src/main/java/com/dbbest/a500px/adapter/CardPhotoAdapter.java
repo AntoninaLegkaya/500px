@@ -24,13 +24,14 @@ import com.dbbest.a500px.db.model.UserModel;
 import com.dbbest.a500px.db.repository.AvatarsColumns;
 import com.dbbest.a500px.db.repository.UserColumns;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import timber.log.Timber;
 
 public class CardPhotoAdapter extends BaseRecycleViewCursorAdapter<CardPhotoAdapter.PhotoViewHolder> {
 
 
     public CardPhotoAdapter() {
-        super(null);
+        super();
     }
 
     @Override
@@ -42,7 +43,6 @@ public class CardPhotoAdapter extends BaseRecycleViewCursorAdapter<CardPhotoAdap
 
     @Override
     protected void onBindViewHolder(PhotoViewHolder holder, Cursor cursor) {
-
         CardModel cards = getPhotos(cursor);
         holder.bind(cards);
     }
@@ -50,12 +50,8 @@ public class CardPhotoAdapter extends BaseRecycleViewCursorAdapter<CardPhotoAdap
 
     public CardModel getPhotos(Cursor cursor) {
         try {
-            if (cursor != null) {
-                if (cursor.getCount() == 0) {
-                    Timber.i("Cursor count = 0");
-                } else {
-                    return parseCursor(cursor);
-                }
+            if (cursor != null && cursor.getCount() > 0) {
+                return parseCursor(cursor);
             } else {
                 Timber.i("Cursor has no data");
             }
@@ -68,45 +64,48 @@ public class CardPhotoAdapter extends BaseRecycleViewCursorAdapter<CardPhotoAdap
 
     private CardModel parseCursor(Cursor cursor) {
         CardModel cardModel = new CardModel();
-        if (cursor != null) {
-            PhotoModel model = new PhotoModel(cursor);
-
-            Timber.i("Data from Cursor: user_id: %d ", model.getUserId());
-            Cursor userCursor = App.instance().getContentResolver().query(ProviderDefinition.UserEntry.URI, null, UserColumns.ID + "=?",
-                    new String[]{String.valueOf(model.getUserId())}, UserColumns.ID);
-            if (userCursor != null) {
-                userCursor.moveToFirst();
-                UserModel userModel = new UserModel(userCursor);
-                Timber.i("Data from Cursor: user_name: %s ", userModel.getName());
-                cardModel.setNameUser(userModel.getName());
-                userCursor.close();
-            }
-            cardModel.setImageUrl(model.getImageUrl());
-
-            Cursor avatarCursor = App.instance().getContentResolver().query(ProviderDefinition.AvatarsEntry.URI, null, AvatarsColumns.ID + "=?",
-                    new String[]{String.valueOf(model.getUserId())}, AvatarsColumns.ID);
-            if (avatarCursor != null) {
-                avatarCursor.moveToFirst();
-                AvatarsModel avatarsModel = new AvatarsModel(avatarCursor);
-                cardModel.setAvatars(avatarsModel);
-                avatarCursor.close();
-            }
-
-        } else {
-            Timber.i("Cursor Empty");
-        }
+        composeData(cursor, cardModel);
 
         return cardModel;
     }
 
+    private void composeData(Cursor cursor, CardModel cardModel) {
+        PhotoModel model = new PhotoModel(cursor);
+
+        Cursor userCursor = App.instance().getContentResolver().query(ProviderDefinition.UserEntry.URI, null, UserColumns.ID + "=?",
+                new String[]{String.valueOf(model.getUserId())}, UserColumns.ID);
+
+        Cursor avatarCursor = App.instance().getContentResolver().query(ProviderDefinition.AvatarsEntry.URI, null, AvatarsColumns.ID + "=?",
+                new String[]{String.valueOf(model.getUserId())}, AvatarsColumns.ID);
+
+        if (userCursor != null && userCursor.moveToFirst()) {
+            UserModel userModel = new UserModel(userCursor);
+            cardModel.setNameUser(userModel.getName());
+            userCursor.close();
+        } else if (avatarCursor != null && avatarCursor.moveToFirst()) {
+            cardModel.setImageUrl(model.getImageUrl());
+            AvatarsModel avatarsModel = new AvatarsModel(avatarCursor);
+            cardModel.setAvatars(avatarsModel);
+            avatarCursor.close();
+        } else {
+            Timber.e("Error while compose data");
+
+        }
+    }
+
+
+    @SuppressFBWarnings(value = "SIC_INNER_SHOULD_BE_STATIC_ANON")
     static class PhotoViewHolder extends RecyclerView.ViewHolder {
         CardView cv;
         TextView name;
         ImageView avatar;
         ImageView photo;
+        View parentView;
 
+        @SuppressFBWarnings(value = "URF_UNREAD_FIELD")
         PhotoViewHolder(View itemView) {
             super(itemView);
+            parentView = itemView;
             cv = (CardView) itemView.findViewById(R.id.cardView);
             name = (TextView) itemView.findViewById(R.id.text_name);
             avatar = (ImageView) itemView.findViewById(R.id.image_avatar);
@@ -122,15 +121,16 @@ public class CardPhotoAdapter extends BaseRecycleViewCursorAdapter<CardPhotoAdap
 
         void onAvatarSet(String fullPreviewUrl, final ImageView previewView) {
 
-            Glide.with(previewView.getContext()).load(fullPreviewUrl).asBitmap().centerCrop().into(new BitmapImageViewTarget(previewView) {
-                @Override
-                protected void setResource(Bitmap resource) {
-                    RoundedBitmapDrawable circularBitmapDrawable =
-                            RoundedBitmapDrawableFactory.create(App.instance().getResources(), resource);
-                    circularBitmapDrawable.setCircular(true);
-                    previewView.setImageDrawable(circularBitmapDrawable);
-                }
-            });
+            Glide.with(previewView.getContext()).load(fullPreviewUrl).asBitmap().centerCrop().placeholder(R.drawable.ic_user_places_holder)
+                    .into(new BitmapImageViewTarget(previewView) {
+                        @Override
+                        protected void setResource(Bitmap resource) {
+                            RoundedBitmapDrawable circularBitmapDrawable =
+                                    RoundedBitmapDrawableFactory.create(App.instance().getResources(), resource);
+                            circularBitmapDrawable.setCircular(true);
+                            previewView.setImageDrawable(circularBitmapDrawable);
+                        }
+                    });
         }
 
         void onPhotoSet(String fullPreviewUrl, ImageView previewView) {

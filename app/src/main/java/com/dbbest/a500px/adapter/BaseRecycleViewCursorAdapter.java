@@ -9,8 +9,7 @@ public abstract class BaseRecycleViewCursorAdapter<VH extends RecyclerView.ViewH
 
     private Cursor cursor;
     private boolean dataValid;
-    private int rowIDColumn;
-    private DataSetObserver dataSetObserver = new DataSetObserver() {
+    private final DataSetObserver dataSetObserver = new DataSetObserver() {
         @Override
         public void onChanged() {
             dataValid = true;
@@ -23,10 +22,10 @@ public abstract class BaseRecycleViewCursorAdapter<VH extends RecyclerView.ViewH
             notifyDataSetChanged();
         }
     };
+    private int rowIDColumn;
 
-    public BaseRecycleViewCursorAdapter(Cursor cursor) {
+    public BaseRecycleViewCursorAdapter() {
         setHasStableIds(true);
-        swapCursor(cursor);
     }
 
     public abstract VH onCreateViewHolder(ViewGroup parent, int viewType);
@@ -72,27 +71,25 @@ public abstract class BaseRecycleViewCursorAdapter<VH extends RecyclerView.ViewH
         }
     }
 
+    @SuppressWarnings("PMD.CompareObjectsWithEquals")
     public Cursor swapCursor(Cursor newCursor) {
         if (newCursor == cursor) {
             return null;
         }
         Cursor oldCursor = cursor;
-        if (oldCursor != null) {
-            if (dataSetObserver != null) {
-                oldCursor.unregisterDataSetObserver(dataSetObserver);
-            }
+        if (oldCursor != null && dataSetObserver != null) {
+            oldCursor.unregisterDataSetObserver(dataSetObserver);
         }
         cursor = newCursor;
-        if (newCursor != null) {
-            if (dataSetObserver != null) {
-                newCursor.registerDataSetObserver(dataSetObserver);
-            }
-            rowIDColumn = newCursor.getColumnIndexOrThrow("_id");
-            dataValid = true;
-            notifyDataSetChanged();
-        } else {
+        if (newCursor == null) {
             rowIDColumn = -1;
             dataValid = false;
+            notifyDataSetChanged();
+
+        } else {
+            newCursor.registerDataSetObserver(dataSetObserver);
+            rowIDColumn = newCursor.getColumnIndexOrThrow("_id");
+            dataValid = true;
             notifyDataSetChanged();
         }
         return oldCursor;

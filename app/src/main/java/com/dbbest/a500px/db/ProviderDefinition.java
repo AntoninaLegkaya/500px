@@ -10,12 +10,15 @@ import net.simonvt.schematic.annotation.TableEndpoint;
 
 @SuppressWarnings({"PMD.UseUtilityClass", "PMD.UncommentedEmptyConstructor",
         "PMD.ConstantsInInterface", "PMD.AvoidConstantsInterface"})
+//@SuppressFBWarnings(value = "DLS_DEAD_LOCAL_STORE")
+//@SuppressFBWarnings(value = "NP_LOAD_OF_KNOWN_NULL_VALUE")
+
 @ContentProvider(authority = ProviderDefinition.AUTHORITY,
         database = DatabaseDefinition.class,
         packageName = "com.dbbest.a500px.db",
-        name = "AppContentProvider")
+        name = "ApplicationContentProvider")
 public class ProviderDefinition {
-    public static final String AUTHORITY = BuildConfig.APPLICATION_ID + ".provider.AppContentProvider";
+    public static final String AUTHORITY = BuildConfig.APPLICATION_ID + ".provider.ApplicationContentProvider";
     private static final Uri BASE_CONTENT_URI = Uri.parse("content://" + AUTHORITY);
     private static final String VND_HMNI_ITEM = "vnd.hmni.item/";
 
