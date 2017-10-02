@@ -1,9 +1,8 @@
 <resources>
     <string name="app_name">500px</string>
     <string name="px_consumer_key">aSRarMs8venzJ0jiYi4EqpakNZdfkXkyISAXZ5Bi</string>
-    <string name="px_consumer_secret">BPsFryPn9rkXKxyokGBwJnt95LLNUsp05LoLLbKV</string>
+    <!--<string name="px_consumer_secret">BPsFryPn9rkXKxyokGBwJnt95LLNUsp05LoLLbKV</string>-->
     <string name="gallery_info_string">Here was You gallery!</string>
-    <string name="user_name_hint">username</string>
-    <string name="password_hint">password</string>
-    <string name="login_label">Login</string>
+    <string name="get_label">Get Photos</string>
+    <string name="error_swap_cursor">Nothing come in</string>
 </resources>

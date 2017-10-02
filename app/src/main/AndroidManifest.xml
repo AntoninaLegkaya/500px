@@ -8,9 +8,6 @@
     <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.CAMERA"/>
 
-    <uses-feature android:name="android.hardware.camera"/>
-    <uses-feature android:name="android.hardware.camera.autofocus"/>
-
     <application
         android:name=".App"
         android:allowBackup="false"
@@ -38,9 +35,16 @@
             android:name="io.fabric.ApiKey"
             android:value="338ed8091de5a9dbdca2edb8cf91a867ce7f3c25"/>
         <service
-            android:name=".net.service.DownloadService"
+            android:name=".net.service.ExecuteService"
+            android:exported="false"/>
+
+        <provider
+            android:name="com.dbbest.a500px.db.ApplicationContentProvider"
+            android:authorities="${applicationId}.provider.ApplicationContentProvider"
             android:exported="false"/>
 
     </application>
+
+
 
 </manifest>

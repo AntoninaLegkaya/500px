@@ -2,12 +2,11 @@ package com.dbbest.a500px;
 
 import android.support.multidex.MultiDexApplication;
 
-import com.dbbest.a500px.di.Graph;
-import com.dbbest.a500px.di.GraphImpl;
 import com.facebook.stetho.Stetho;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import timber.log.Timber;
+
 @SuppressFBWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
 public class App extends MultiDexApplication {
 
@@ -25,16 +24,6 @@ public class App extends MultiDexApplication {
         return instance;
     }
 
-    /**
-     * Method to get Graph instance
-     *
-     * @return {@link Graph} instance
-     */
-    public static Graph graph() {
-        return GraphImpl.instance();
-    }
-
-
     @Override
 
     public void onCreate() {
@@ -43,5 +32,9 @@ public class App extends MultiDexApplication {
         Stetho.initializeWithDefaults(this);
         Timber.plant(new Timber.DebugTree());
 
+    }
+
+    public static DataProcessor processor() {
+        return DataProcessor.instance();
     }
 }
