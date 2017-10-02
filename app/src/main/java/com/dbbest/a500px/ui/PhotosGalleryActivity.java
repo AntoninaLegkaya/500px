@@ -28,7 +28,6 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
         ExecuteResultReceiver.Receiver {
 
     private static final int VISIBLE_THRESHOLD = 3;
-    private static int DOWNLOAD_LIMIT = 2;
     private CardPhotoAdapter adapter;
     private ExecuteResultReceiver receiver;
     private TextView infoView;
@@ -87,6 +86,7 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
         intent.putExtra("receiver", receiver);
         intent.putExtra("command", "execute");
         intent.putExtra("page", page);
+        int DOWNLOAD_LIMIT = 2;
         intent.putExtra("count", DOWNLOAD_LIMIT);
         startService(intent);
     }
@@ -142,4 +142,8 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
         loadingView.setVisibility(View.GONE);
     }
 
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+    }
 }

@@ -1,6 +1,9 @@
 package com.dbbest.a500px.adapter;
 
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.dbbest.a500px.App;
 import com.dbbest.a500px.R;
 import com.dbbest.a500px.db.ProviderDefinition;
@@ -50,7 +54,6 @@ public class CardPhotoAdapter extends BaseRecycleViewCursorAdapter<CardPhotoAdap
                 if (cursor.getCount() == 0) {
                     Timber.i("Cursor count = 0");
                 } else {
-                    Timber.i("Cursor has data");
                     return parseCursor(cursor);
                 }
             } else {
@@ -117,12 +120,17 @@ public class CardPhotoAdapter extends BaseRecycleViewCursorAdapter<CardPhotoAdap
 
         }
 
-        void onAvatarSet(String fullPreviewUrl, ImageView previewView) {
+        void onAvatarSet(String fullPreviewUrl, final ImageView previewView) {
 
-            Glide.with(previewView.getContext())
-                    .load(fullPreviewUrl)
-                    .placeholder(R.drawable.ic_user_places_holder)
-                    .into(previewView);
+            Glide.with(previewView.getContext()).load(fullPreviewUrl).asBitmap().centerCrop().into(new BitmapImageViewTarget(previewView) {
+                @Override
+                protected void setResource(Bitmap resource) {
+                    RoundedBitmapDrawable circularBitmapDrawable =
+                            RoundedBitmapDrawableFactory.create(App.instance().getResources(), resource);
+                    circularBitmapDrawable.setCircular(true);
+                    previewView.setImageDrawable(circularBitmapDrawable);
+                }
+            });
         }
 
         void onPhotoSet(String fullPreviewUrl, ImageView previewView) {
