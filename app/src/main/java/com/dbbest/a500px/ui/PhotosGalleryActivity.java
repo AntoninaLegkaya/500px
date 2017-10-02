@@ -27,54 +27,85 @@ import static android.app.DownloadManager.STATUS_SUCCESSFUL;
 public class PhotosGalleryActivity extends AppCompatActivity implements
         ExecuteResultReceiver.Receiver {
 
+    private static final int VISIBLE_THRESHOLD = 3;
+    private static int DOWNLOAD_LIMIT = 2;
     private CardPhotoAdapter adapter;
-    private static final int VISIBLE_THRESHOLD = 2;
     private ExecuteResultReceiver receiver;
     private TextView infoView;
     private RelativeLayout loadingView;
+    private int page = 0;
+    private boolean loading = false;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        receiver = new ExecuteResultReceiver(new Handler());
+        receiver.setReceiver(this);
+
+        if (IsEmptyCursor()) {
+            buildServiceCommand();
+        }
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        receiver.setReceiver(null);
+    }
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery);
-        receiver = new ExecuteResultReceiver(new Handler());
-        receiver.setReceiver(this);
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler);
         infoView = (TextView) findViewById(R.id.text_info);
         loadingView = (RelativeLayout) findViewById(R.id.loadingView);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-                if (linearLayoutManager.getItemCount() <= linearLayoutManager.findLastVisibleItemPosition() + VISIBLE_THRESHOLD) {
-                    final Intent intent = new Intent(Intent.ACTION_SYNC, null, App.instance(), ExecuteService.class);
-                    intent.putExtra("receiver", receiver);
-                    intent.putExtra("command", "execute");
-                    intent.putExtra("page", 2);
-                    intent.putExtra("count", 3);
-                    showSpinner();
-//                    startService(intent);
 
+                super.onScrolled(recyclerView, dx, dy);
+                int totalItemCount = layoutManager.getItemCount();
+                int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
+                if (!loading && totalItemCount <= (lastVisibleItemPosition + VISIBLE_THRESHOLD)) {
+                    page = page + 1;
+                    buildServiceCommand();
+                    loading=true;
                 }
             }
         });
-        adapter = new CardPhotoAdapter(getPhotos());
+        adapter = new CardPhotoAdapter();
         recyclerView.setAdapter(adapter);
     }
 
-    private Cursor getPhotos() {
+    private void buildServiceCommand() {
+        final Intent intent = new Intent(Intent.ACTION_SYNC, null, App.instance(), ExecuteService.class);
+        intent.putExtra("receiver", receiver);
+        intent.putExtra("command", "execute");
+        intent.putExtra("page", page);
+        intent.putExtra("count", DOWNLOAD_LIMIT);
+        startService(intent);
+    }
+
+    private boolean IsEmptyCursor() {
+        boolean isEmpty = true;
         Cursor cursor = App.instance().getContentResolver().query(ProviderDefinition.PhotoEntry.URI, null, null, null, null);
-        if (cursor.moveToFirst()) {
-            infoView.setVisibility(View.GONE);
-            return cursor;
-        } else {
-            infoView.setVisibility(View.VISIBLE);
-            infoView.setText(R.string.error_swap_cursor);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                infoView.setVisibility(View.GONE);
+                adapter.changeCursor(cursor);
+                isEmpty = false;
+            } else {
+                infoView.setVisibility(View.VISIBLE);
+                infoView.setText(R.string.error_swap_cursor);
+            }
+
         }
-        return null;
+        return isEmpty;
     }
 
     @Override
@@ -82,19 +113,19 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
         hideSpinner();
         switch (resultCode) {
             case STATUS_RUNNING:
-                showSpinner();
                 break;
             case STATUS_SUCCESSFUL:
                 hideSpinner();
-                Toast.makeText(PhotosGalleryActivity.this,
-                        "Success!" , Toast.LENGTH_LONG)
-                        .show();
+                infoView.setVisibility(View.GONE);
+                IsEmptyCursor();
+                loading=false;
                 break;
             case STATUS_FAILED:
                 hideSpinner();
                 Toast.makeText(PhotosGalleryActivity.this,
                         "Some Error was happened! ", Toast.LENGTH_LONG)
                         .show();
+                loading=false;
                 break;
             default:
                 break;

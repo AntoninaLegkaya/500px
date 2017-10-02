@@ -11,7 +11,6 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.dbbest.a500px.net.service.ExecuteResultReceiver;
-import com.dbbest.a500px.net.service.ExecuteService;
 import com.dbbest.a500px.ui.PhotosGalleryActivity;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -44,11 +43,11 @@ public class MainActivity extends AppCompatActivity implements
         receiver = new ExecuteResultReceiver(new Handler());
         receiver.setReceiver(this);
 
-        final Intent intent = new Intent(Intent.ACTION_SYNC, null, this, ExecuteService.class);
-        intent.putExtra("receiver", receiver);
-        intent.putExtra("command", "execute");
-        intent.putExtra("page", 1);
-        intent.putExtra("count", 3);
+//        final Intent intent = new Intent(Intent.ACTION_SYNC, null, this, ExecuteService.class);
+//        intent.putExtra("receiver", receiver);
+//        intent.putExtra("command", "execute");
+//        intent.putExtra("page", 1);
+//        intent.putExtra("count", 3);
 
         loginBtn = (Button) findViewById(R.id.login_btn);
         loadingView = (RelativeLayout) findViewById(R.id.loadingView);
@@ -63,7 +62,8 @@ public class MainActivity extends AppCompatActivity implements
                 App.processor().repository().user().removeAll();
                 App.processor().repository().avatars().removeAll();
                 showSpinner();
-                startService(intent);
+                moveToGallery();
+//                startService(intent);
             }
         });
     }

@@ -25,8 +25,8 @@ import timber.log.Timber;
 public class CardPhotoAdapter extends BaseRecycleViewCursorAdapter<CardPhotoAdapter.PhotoViewHolder> {
 
 
-    public CardPhotoAdapter(Cursor cursor) {
-        super(cursor);
+    public CardPhotoAdapter() {
+        super(null);
     }
 
     @Override
@@ -38,9 +38,11 @@ public class CardPhotoAdapter extends BaseRecycleViewCursorAdapter<CardPhotoAdap
 
     @Override
     protected void onBindViewHolder(PhotoViewHolder holder, Cursor cursor) {
+
         CardModel cards = getPhotos(cursor);
         holder.bind(cards);
     }
+
 
     public CardModel getPhotos(Cursor cursor) {
         try {
@@ -62,32 +64,36 @@ public class CardPhotoAdapter extends BaseRecycleViewCursorAdapter<CardPhotoAdap
     }
 
     private CardModel parseCursor(Cursor cursor) {
+        CardModel cardModel = new CardModel();
         if (cursor != null) {
             PhotoModel model = new PhotoModel(cursor);
-            CardModel cardModel = new CardModel();
+
             Timber.i("Data from Cursor: user_id: %d ", model.getUserId());
             Cursor userCursor = App.instance().getContentResolver().query(ProviderDefinition.UserEntry.URI, null, UserColumns.ID + "=?",
                     new String[]{String.valueOf(model.getUserId())}, UserColumns.ID);
-            userCursor.moveToFirst();
-            UserModel userModel = new UserModel(userCursor);
-            Timber.i("Data from Cursor: user_name: %s ", userModel.getName());
-            cardModel.setNameUser(userModel.getName());
-
-
+            if (userCursor != null) {
+                userCursor.moveToFirst();
+                UserModel userModel = new UserModel(userCursor);
+                Timber.i("Data from Cursor: user_name: %s ", userModel.getName());
+                cardModel.setNameUser(userModel.getName());
+                userCursor.close();
+            }
             cardModel.setImageUrl(model.getImageUrl());
 
             Cursor avatarCursor = App.instance().getContentResolver().query(ProviderDefinition.AvatarsEntry.URI, null, AvatarsColumns.ID + "=?",
                     new String[]{String.valueOf(model.getUserId())}, AvatarsColumns.ID);
-            avatarCursor.moveToFirst();
-            AvatarsModel avatarsModel = new AvatarsModel(avatarCursor);
-            cardModel.setAvatars(avatarsModel);
-            return cardModel;
+            if (avatarCursor != null) {
+                avatarCursor.moveToFirst();
+                AvatarsModel avatarsModel = new AvatarsModel(avatarCursor);
+                cardModel.setAvatars(avatarsModel);
+                avatarCursor.close();
+            }
+
         } else {
             Timber.i("Cursor Empty");
-            return null;
         }
 
-
+        return cardModel;
     }
 
     static class PhotoViewHolder extends RecyclerView.ViewHolder {
