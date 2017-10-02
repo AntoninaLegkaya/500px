@@ -82,7 +82,8 @@ public class CardPhotoAdapter extends BaseRecycleViewCursorAdapter<CardPhotoAdap
             UserModel userModel = new UserModel(userCursor);
             cardModel.setNameUser(userModel.getName());
             userCursor.close();
-        } if (avatarCursor != null && avatarCursor.moveToFirst()) {
+        }
+        if (avatarCursor != null && avatarCursor.moveToFirst()) {
             cardModel.setImageUrl(model.getImageUrl());
             AvatarsModel avatarsModel = new AvatarsModel(avatarCursor);
             cardModel.setAvatars(avatarsModel);
