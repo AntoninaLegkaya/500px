@@ -26,6 +26,7 @@ public abstract class BaseRecycleViewCursorAdapter<VH extends RecyclerView.ViewH
 
     public BaseRecycleViewCursorAdapter() {
         setHasStableIds(true);
+        swapCursor(null);
     }
 
     public abstract VH onCreateViewHolder(ViewGroup parent, int viewType);
