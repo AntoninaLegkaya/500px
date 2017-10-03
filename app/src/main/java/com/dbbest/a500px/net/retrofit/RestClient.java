@@ -48,8 +48,8 @@ public class RestClient {
     }
 
 
-    public Object getPhotos(String consumeKey, int page, int count) {
-        return executeCall(restService.getPhotos(consumeKey, page, count));
+    public Object getPhotos(String consumeKey, int page, int count, int size) {
+        return executeCall(restService.getPhotos(consumeKey, page, count, size));
     }
 
    private Object executeCall(Call<ListPhotos> call) {

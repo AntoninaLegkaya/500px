@@ -60,7 +60,7 @@
 
         <ImageView
             android:id="@+id/image_photo"
-            android:layout_width="match_parent"
+            android:layout_width="@dimen/rectangle_height"
             android:layout_height="@dimen/rectangle_height"
             android:layout_below="@+id/layout_bio"
             android:layout_centerHorizontal="true"

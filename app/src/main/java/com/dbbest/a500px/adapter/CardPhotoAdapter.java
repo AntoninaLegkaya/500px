@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.bumptech.glide.request.target.Target;
 import com.dbbest.a500px.App;
 import com.dbbest.a500px.R;
 import com.dbbest.a500px.db.ProviderDefinition;
@@ -139,6 +140,8 @@ public class CardPhotoAdapter extends BaseRecycleViewCursorAdapter<CardPhotoAdap
             Glide.with(previewView.getContext())
                     .load(fullPreviewUrl)
                     .placeholder(R.drawable.ic_empty)
+                    .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+                    .fitCenter().crossFade()
                     .into(previewView);
         }
 

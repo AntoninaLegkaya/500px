@@ -44,8 +44,10 @@ public class ExecuteService extends IntentService {
                     RestClient restClient = new RestClient();
                     int count = intent.getIntExtra("count", 1);
                     int page = intent.getIntExtra("page", 1);
+                    int size = intent.getIntExtra("image_size", 2);
 
-                    ListPhotos results = (ListPhotos) restClient.getPhotos(getApplicationContext().getString(R.string.px_consumer_key), page, count);
+                    ListPhotos results = (ListPhotos) restClient.getPhotos(getApplicationContext().getString(R.string.px_consumer_key), page,
+                            count, size);
 
                     List<UserModel> userToSave = new ArrayList<>();
                     List<PhotoModel> photosToSave = new ArrayList<>();
