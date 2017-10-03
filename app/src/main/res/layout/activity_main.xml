@@ -5,11 +5,11 @@
     android:background="@drawable/main_backgraund">
 
     <ImageView
-        android:id="@+id/imageView1"
+        android:id="@+id/image_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/relativeLayout1"
         android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
         android:layout_marginBottom="@dimen/margin"
         android:src="@drawable/ic_500px_logo" />
 
@@ -26,8 +26,9 @@
             android:id="@+id/login_btn"
             android:layout_width="@dimen/width_200dp"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_gravity="center_horizontal"
+            android:layout_gravity="bottom"
             android:layout_marginTop="@dimen/margin_20dp"
             android:text="@string/get_label"
             android:textColor="@android:color/black" />

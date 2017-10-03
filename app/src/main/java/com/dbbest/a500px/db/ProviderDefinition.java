@@ -10,8 +10,6 @@ import net.simonvt.schematic.annotation.TableEndpoint;
 
 @SuppressWarnings({"PMD.UseUtilityClass", "PMD.UncommentedEmptyConstructor",
         "PMD.ConstantsInInterface", "PMD.AvoidConstantsInterface"})
-//@SuppressFBWarnings(value = "DLS_DEAD_LOCAL_STORE")
-//@SuppressFBWarnings(value = "NP_LOAD_OF_KNOWN_NULL_VALUE")
 
 @ContentProvider(authority = ProviderDefinition.AUTHORITY,
         database = DatabaseDefinition.class,

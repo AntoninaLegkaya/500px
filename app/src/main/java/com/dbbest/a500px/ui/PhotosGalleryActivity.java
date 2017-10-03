@@ -26,23 +26,25 @@ import static android.app.DownloadManager.STATUS_SUCCESSFUL;
 public class PhotosGalleryActivity extends AppCompatActivity implements
         ExecuteResultReceiver.Receiver {
 
-    private static final int DOWNLOAD_LIMIT = 2;
-    private static final int VISIBLE_THRESHOLD = 3;
+    private static final int DOWNLOAD_LIMIT = 3;
+    private static final int IMAGE_SIZE = 3;
+    private static final int VISIBLE_THRESHOLD = 4;
     private CardPhotoAdapter adapter;
     private ExecuteResultReceiver receiver;
     private TextView infoView;
-    private int page = 0;
+    private int page;
     private boolean loading = false;
 
     @Override
     protected void onStart() {
         super.onStart();
+        Intent intent = getIntent();
+        if (intent != null) {
+            page = intent.getIntExtra("page", 0);
+        }
         receiver = new ExecuteResultReceiver(new Handler());
         receiver.setReceiver(this);
-
-        if (isEmptyCursor()) {
-            buildServiceCommand();
-        }
+        isEmptyCursor();
 
     }
 
@@ -83,6 +85,7 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
         final Intent intent = new Intent(Intent.ACTION_SYNC, null, App.instance(), ExecuteService.class);
         intent.putExtra("receiver", receiver);
         intent.putExtra("command", "execute");
+        intent.putExtra("image_size", IMAGE_SIZE);
         intent.putExtra("page", page);
         intent.putExtra("count", DOWNLOAD_LIMIT);
         startService(intent);
