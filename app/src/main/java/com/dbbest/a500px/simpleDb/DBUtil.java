@@ -3,7 +3,10 @@ package com.dbbest.a500px.simpleDb;
 import android.database.Cursor;
 import android.support.annotation.Nullable;
 
-public  final class DBUtil {
+public final class DBUtil {
+
+    private DBUtil() {
+    }
 
     public static String[] where(Object... args) {
         if (args == null || args.length == 0) {

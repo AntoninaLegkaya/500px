@@ -35,7 +35,5 @@
     </issue>
     <issue id="IconDuplicatesConfig" severity="ignore"/>
     <issue id="IconDipSize" severity="ignore"/>
-    <issue id="StaticFieldLeak">
-        <ignore regexp="com.dbbest.a500px.db.ApplicationDatabase"/>
-    </issue>
+
 </lint>

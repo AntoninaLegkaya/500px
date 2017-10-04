@@ -33,11 +33,12 @@ public class PhotoContentProvider extends ContentProvider {
 
     public static final String AUTHORITY = BuildConfig.APPLICATION_ID + ".provider.PhotoContentProvider";
     private static final int PHOTO_ENTRY_URI = 0;
+    private static final String TABLE_PHOTO_NAME = "photo";
 
     private static final UriMatcher MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
-        MATCHER.addURI(AUTHORITY, "photo", PHOTO_ENTRY_URI);
+        MATCHER.addURI(AUTHORITY, TABLE_PHOTO_NAME, PHOTO_ENTRY_URI);
     }
 
     private SQLiteOpenHelper database;
@@ -50,9 +51,8 @@ public class PhotoContentProvider extends ContentProvider {
         return false;
     }
 
-    private SelectionBuilder getBuilder(String table) {
-        SelectionBuilder builder = new SelectionBuilder();
-        return builder;
+    private SelectionBuilder getBuilder() {
+        return new SelectionBuilder();
     }
 
     private long[] insertValues(SQLiteDatabase db, String table, ContentValues[] values) {
@@ -106,7 +106,8 @@ public class PhotoContentProvider extends ContentProvider {
     }
 
     public boolean exists(Integer id) {
-        Cursor cursor = App.instance().getContentResolver().query(PhotoEntry.URI, null, PhotoEntry._ID + "=?", new String[]{String.valueOf(id)}, null);
+        Cursor cursor = App.instance().getContentResolver().query(PhotoEntry.URI, null, PhotoEntry._ID + "=?",
+                new String[]{String.valueOf(id)}, null);
         boolean result = cursor != null && cursor.getCount() > 0;
         closeCursor(cursor);
         return result;
@@ -127,13 +128,13 @@ public class PhotoContentProvider extends ContentProvider {
         final SQLiteDatabase db = database.getWritableDatabase();
         db.beginTransaction();
         try {
-            switch (MATCHER.match(uri)) {
-                case PHOTO_ENTRY_URI: {
-                    insertValues(db, "photo", values);
-                    getContext().getContentResolver().notifyChange(uri, null);
-                    break;
-                }
+            if (MATCHER.match(uri) == PHOTO_ENTRY_URI) {
+                insertValues(db, TABLE_PHOTO_NAME, values);
+                getContext().getContentResolver().notifyChange(uri, null);
+            } else {
+                throw new IllegalArgumentException("Unknown URI by bulkInsert " + uri);
             }
+
             db.setTransactionSuccessful();
         } finally {
             db.endTransaction();
@@ -159,94 +160,76 @@ public class PhotoContentProvider extends ContentProvider {
     @Nullable
     @Override
     public String getType(Uri uri) {
-        switch (MATCHER.match(uri)) {
-            case PHOTO_ENTRY_URI: {
-                return "vnd.hmni.item/photo";
-            }
-            default: {
-                throw new IllegalArgumentException("Unknown URI " + uri);
-            }
+        if (MATCHER.match(uri) == PHOTO_ENTRY_URI) {
+            return "vnd.hmni.item/photo";
+        } else {
+            throw new IllegalArgumentException("Unknown URI get type " + uri);
         }
     }
 
     @Nullable
     @Override
-    public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
+    public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection,
+                        @Nullable String[] selectionArgs, @Nullable String sortOrder) {
         final SQLiteDatabase db = database.getReadableDatabase();
-        switch (MATCHER.match(uri)) {
-            case PHOTO_ENTRY_URI: {
-                SelectionBuilder builder = getBuilder("PhotoEntry");
-                String table = "photo";
-                final String groupBy = null;
-                final String having = null;
-                final String limit = null;
-                Cursor cursor = builder.table(table)
-                        .where(selection, selectionArgs)
-                        .query(db, projection, groupBy, having, sortOrder, limit);
-                cursor.setNotificationUri(getContext().getContentResolver(), uri);
-                return cursor;
-            }
-
-            default: {
-                throw new IllegalArgumentException("Unknown URI " + uri);
-            }
+        if (MATCHER.match(uri) == PHOTO_ENTRY_URI) {
+            SelectionBuilder builder = getBuilder();
+            String table = TABLE_PHOTO_NAME;
+            Cursor cursor = builder.table(table)
+                    .where(selection, selectionArgs)
+                    .query(db, projection, null, null, sortOrder, null);
+            cursor.setNotificationUri(getContext().getContentResolver(), uri);
+            return cursor;
+        } else {
+            throw new IllegalArgumentException("Unknown URI  in query" + uri);
         }
     }
+
 
     @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
         final SQLiteDatabase db = database.getWritableDatabase();
-        switch (MATCHER.match(uri)) {
-            case PHOTO_ENTRY_URI: {
-                final long id = db.insertOrThrow("photo", null, values);
-                getContext().getContentResolver().notifyChange(uri, null);
-                return ContentUris.withAppendedId(uri, id);
-            }
-            default: {
-                throw new IllegalArgumentException("Unknown URI " + uri);
-            }
+        if (MATCHER.match(uri) == PHOTO_ENTRY_URI) {
+            final long id = db.insertOrThrow(TABLE_PHOTO_NAME, null, values);
+            getContext().getContentResolver().notifyChange(uri, null);
+            return ContentUris.withAppendedId(uri, id);
+        } else {
+            throw new IllegalArgumentException("Unknown URI by insert " + uri);
         }
     }
 
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
         final SQLiteDatabase db = database.getWritableDatabase();
-        switch (MATCHER.match(uri)) {
-            case PHOTO_ENTRY_URI: {
-                SelectionBuilder builder = getBuilder("PhotoEntry");
-                builder.where(selection, selectionArgs);
-                final int count = builder
-                        .table("photo")
-                        .delete(db);
-                getContext().getContentResolver().notifyChange(uri, null);
-                return count;
-            }
-            default: {
-                throw new IllegalArgumentException("Unknown URI " + uri);
-            }
+        if (MATCHER.match(uri) == PHOTO_ENTRY_URI) {
+            SelectionBuilder builder = getBuilder();
+            builder.where(selection, selectionArgs);
+            final int count = builder
+                    .table(TABLE_PHOTO_NAME)
+                    .delete(db);
+            getContext().getContentResolver().notifyChange(uri, null);
+            return count;
+        } else {
+            throw new IllegalArgumentException("Unknown URI by delete " + uri);
         }
     }
 
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
         final SQLiteDatabase db = database.getWritableDatabase();
-        switch (MATCHER.match(uri)) {
-            case PHOTO_ENTRY_URI: {
-                SelectionBuilder builder = getBuilder("PhotoEntry");
-                builder.where(selection, selectionArgs);
-                final int count = builder.table("photo")
-                        .update(db, values);
-                if (count > 0) {
-                    getContext().getContentResolver().notifyChange(uri, null);
-                }
-                return count;
+        if (MATCHER.match(uri) ==
+                PHOTO_ENTRY_URI) {
+            SelectionBuilder builder = getBuilder();
+            builder.where(selection, selectionArgs);
+            final int count = builder.table(TABLE_PHOTO_NAME)
+                    .update(db, values);
+            if (count > 0) {
+                getContext().getContentResolver().notifyChange(uri, null);
             }
-            default: {
-                throw new IllegalArgumentException("Unknown URI " + uri);
-            }
+            return count;
+        } else {
+            throw new IllegalArgumentException("Unknown URI by update" + uri);
         }
     }
-
-
 }

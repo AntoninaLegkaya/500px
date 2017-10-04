@@ -53,6 +53,7 @@ public class ExecuteService extends IntentService {
                     for (Photo photo : results.getPhotos()) {
                         PhotoModel photoModel = new PhotoModel(photo);
                         photoModel.setName(photo.getUser().getFullname());
+                        photoModel.setImageUrl(photo.getImageUrl());
                         photoModel.setUserId(photo.getUserId());
                         photoModel.setAvDefUri(photo.getUser().getAvatars().getDefault().getHttps());
                         photoModel.setAvLargeUri(photo.getUser().getAvatars().getLarge().getHttps());
@@ -61,7 +62,7 @@ public class ExecuteService extends IntentService {
                         photosToSave.add(photoModel.values());
                     }
 
-                    if (photosToSave.size() > 0) {
+                    if (!photosToSave.isEmpty()) {
                         ContentValues[] cvArray = new ContentValues[photosToSave.size()];
                         photosToSave.toArray(cvArray);
                         int lines = App.instance().getContentResolver().bulkInsert(PhotoEntry.URI, cvArray);

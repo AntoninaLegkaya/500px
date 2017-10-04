@@ -7,7 +7,7 @@ public class Avatars {
 
     @SerializedName("default")
     @Expose
-    private Default _default;
+    private Default def;
     @SerializedName("large")
     @Expose
     private Large large;
@@ -19,11 +19,11 @@ public class Avatars {
     private Tiny tiny;
 
     public Default getDefault() {
-        return _default;
+        return def;
     }
 
-    public void setDefault(Default _default) {
-        this._default = _default;
+    public void setDefault(Default def) {
+        this.def = def;
     }
 
     public Large getLarge() {

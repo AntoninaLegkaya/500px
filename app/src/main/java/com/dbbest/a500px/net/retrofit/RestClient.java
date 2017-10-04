@@ -16,9 +16,10 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import timber.log.Timber;
 
-public class RestClient {
 
-    private static RestClient instance;
+public final class RestClient {
+
+    private static final RestClient instance = new RestClient();
     private final RestService restService;
 
     private RestClient() {
@@ -44,24 +45,10 @@ public class RestClient {
     }
 
     public static RestClient getInstance() {
-        if (instance == null) {
-            instance = new RestClient();
-        }
         return instance;
     }
 
     public ListPhotos getPhotos(String consumeKey, int page, int count, int size) {
-//        (restService.getPhotos(consumeKey, page, count, size)).enqueue(new Callback<ListPhotos>() {
-//            @Override
-//            public void onResponse(Call<ListPhotos> call, Response<ListPhotos> response) {
-//
-//            }
-//
-//            @Override
-//            public void onFailure(Call<ListPhotos> call, Throwable t) {
-//
-//            }
-//        });
         try {
             Response<ListPhotos> response = (restService.getPhotos(consumeKey, page, count, size)).execute();
             return response.body();

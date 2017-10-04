@@ -33,8 +33,4 @@ public class App extends Application {
         Timber.plant(new Timber.DebugTree());
 
     }
-
-    public static DataProcessor processor() {
-        return DataProcessor.instance();
-    }
 }

@@ -5,6 +5,9 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,19 +18,44 @@ import android.widget.Toast;
 import com.dbbest.a500px.App;
 import com.dbbest.a500px.Constant;
 import com.dbbest.a500px.R;
+import com.dbbest.a500px.adapter.PhotoAdapter;
 import com.dbbest.a500px.net.service.ExecuteResultReceiver;
 import com.dbbest.a500px.net.service.ExecuteService;
 import com.dbbest.a500px.simpleDb.PhotoEntry;
 
 
 public class PhotosGalleryActivity extends AppCompatActivity implements
-        ExecuteResultReceiver.Receiver {
+        ExecuteResultReceiver.Receiver, LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final int VISIBLE_THRESHOLD = 4;
     private ExecuteResultReceiver receiver;
     private TextView infoView;
     private int page;
     private boolean loading = false;
+    private PhotoAdapter adapter;
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new CursorLoader(this,
+                PhotoEntry.URI,
+                null,
+                null,
+                null,
+                null
+        );
+    }
+
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        getPhotosFromBd(data);
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        adapter.swapCursor(null);
+    }
 
 
     @Override
@@ -52,8 +80,9 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
                 }
             }
         });
-//        adapter = new CardPhotoAdapter(this,);
-//        recyclerView.setAdapter(adapter);
+        adapter = new PhotoAdapter();
+        recyclerView.setAdapter(adapter);
+        getSupportLoaderManager().initLoader(Constant.LOADER_PHOTO, null, this);
     }
 
 
@@ -66,7 +95,7 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
         }
         receiver = new ExecuteResultReceiver(new Handler());
         receiver.setReceiver(this);
-        getPhotosFromBd();
+
 
     }
 
@@ -74,6 +103,12 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
     protected void onPause() {
         super.onPause();
         receiver.setReceiver(null);
+    }
+
+    public void onResume() {
+        super.onResume();
+        // Restart loader so that it refreshes displayed items according to database
+        getSupportLoaderManager().restartLoader(0x01, null, this);
     }
 
     private void startService() {
@@ -85,31 +120,30 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
         startService(intent);
     }
 
-    private boolean getPhotosFromBd() {
-        boolean isEmpty = true;
-        Cursor cursor = App.instance().getContentResolver().query(PhotoEntry.URI, null, null, null, null);
+    private void getPhotosFromBd(Cursor cursor) {
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 infoView.setVisibility(View.GONE);
-                isEmpty = false;
+                adapter.swapCursor(cursor);
             } else {
                 infoView.setVisibility(View.VISIBLE);
                 infoView.setText(R.string.error_swap_cursor);
+                startService();
             }
 
         }
-        return isEmpty;
     }
+
 
     @Override
     public void onReceiveResult(int resultCode, Bundle resultData) {
-//        hideSpinner();
         switch (resultCode) {
             case Constant.STATUS_RUNNING:
                 break;
             case Constant.STATUS_SUCCESSFUL:
                 infoView.setVisibility(View.GONE);
                 loading = false;
+                adapter.notifyDataSetChanged();
                 break;
             case Constant.STATUS_FAILED:
                 Toast.makeText(PhotosGalleryActivity.this,
@@ -124,12 +158,7 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
 
     }
 
-//    private void showSpinner() {
-//        loadingView.setVisibility(View.VISIBLE);
-//    }
-//
-//    private void hideSpinner() {
-//        loadingView.setVisibility(View.GONE);
-//    }
+
+
 
 }

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -21,8 +22,18 @@ import timber.log.Timber;
 public class MainActivity extends AppCompatActivity implements ExecuteResultReceiver.Receiver {
 
 
+    private static final int FADE_DELAY = 5000;
     private ExecuteResultReceiver receiver;
     private int page = 0;
+    private final Handler handler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            if (msg.what == 1) {
+                moveToGallery();
+            }
+            return true;
+        }
+    });
 
 
     @Override
@@ -40,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements ExecuteResultRece
             }
         });
     }
+
 
     @Override
     protected void onStart() {
@@ -76,15 +88,10 @@ public class MainActivity extends AppCompatActivity implements ExecuteResultRece
 
     private void getPhotosFromBd() {
         Cursor cursor = App.instance().getContentResolver().query(PhotoEntry.URI, null, null, null, null);
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                cursor.close();
-                Timber.i("Move to gallery");
-                moveToGallery();
-            } else {
-
-                startService();
-            }
+        if (cursor != null && cursor.moveToFirst()) {
+            cursor.close();
+            Timber.i("Move to gallery");
+            handler.sendEmptyMessageDelayed(1, FADE_DELAY);
         } else {
             Timber.i("DB empty start Service");
             startService();

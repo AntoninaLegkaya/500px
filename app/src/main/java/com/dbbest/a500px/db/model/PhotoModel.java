@@ -109,6 +109,7 @@ public class PhotoModel {
         values.put(PhotoEntry._ID, id);
         values.put(PhotoEntry.COLUMN_USER_ID, userId);
         values.put(PhotoEntry.COLUMN_USER_NAME, name);
+        values.put(PhotoEntry.COLUMN_IMAGE_URL, imageUrl);
         values.put(PhotoEntry.COLUMN_URL_DEFAULT, avDefUri);
         values.put(PhotoEntry.COLUMN_URL_LARGE, avLargeUri);
         values.put(PhotoEntry.COLUMN_URL_SMALL, avSmallUri);
