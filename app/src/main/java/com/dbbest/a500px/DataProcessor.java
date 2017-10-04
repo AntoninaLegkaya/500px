@@ -1,14 +1,7 @@
 package com.dbbest.a500px;
 
-import com.dbbest.a500px.db.repository.RepositoryProvider;
-
 public class DataProcessor {
 
-    private final RepositoryProvider repository;
-
-    private DataProcessor() {
-        repository = new RepositoryProvider();
-    }
 
     public static DataProcessor instance() {
         return DataProcessorHolder.instance;
@@ -20,8 +13,5 @@ public class DataProcessor {
 
     private static class DataProcessorHolder {
         static final DataProcessor instance = newInstance();
-    }
-    public RepositoryProvider repository() {
-        return repository;
     }
 }

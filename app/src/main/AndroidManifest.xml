@@ -39,8 +39,8 @@
             android:exported="false"/>
 
         <provider
-            android:name="com.dbbest.a500px.db.ApplicationContentProvider"
-            android:authorities="${applicationId}.provider.ApplicationContentProvider"
+            android:name="com.dbbest.a500px.simpleDb.PhotoContentProvider"
+            android:authorities="${applicationId}.provider.PhotoContentProvider"
             android:exported="false"/>
 
     </application>

@@ -1,6 +1,6 @@
 package com.dbbest.a500px.net.retrofit;
 
-import com.dbbest.a500px.net.model.ListPhotos;
+import com.dbbest.a500px.net.responce.ListPhotos;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

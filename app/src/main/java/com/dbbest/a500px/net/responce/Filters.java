@@ -1,5 +1,5 @@
 
-package com.dbbest.a500px.net.model;
+package com.dbbest.a500px.net.responce;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -28,5 +28,7 @@ public class Filters {
     public void setExclude(Boolean exclude) {
         this.exclude = exclude;
     }
+
+
 
 }

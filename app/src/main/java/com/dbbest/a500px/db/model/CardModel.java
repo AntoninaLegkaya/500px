@@ -3,14 +3,12 @@ package com.dbbest.a500px.db.model;
 public class CardModel {
     public String nameUser;
     public String imageUrl;
-    public AvatarsModel avatars;
 
-    public CardModel(String nameUser, String imageUrl, AvatarsModel avatars) {
+    public CardModel(String nameUser, String imageUrl) {
 
         this.nameUser = nameUser;
         this.imageUrl = imageUrl;
 
-        this.avatars = avatars;
     }
 
     public CardModel() {
@@ -21,13 +19,6 @@ public class CardModel {
         this.imageUrl = imageUrl;
     }
 
-    public AvatarsModel getAvatars() {
-        return avatars;
-    }
-
-    public void setAvatars(AvatarsModel avatars) {
-        this.avatars = avatars;
-    }
 
     public String getNameUser() {
 

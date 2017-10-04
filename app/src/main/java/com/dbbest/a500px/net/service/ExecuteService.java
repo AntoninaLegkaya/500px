@@ -2,26 +2,25 @@ package com.dbbest.a500px.net.service;
 
 import android.annotation.SuppressLint;
 import android.app.IntentService;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.os.ResultReceiver;
 
 import com.dbbest.a500px.App;
-import com.dbbest.a500px.R;
-import com.dbbest.a500px.db.model.AvatarsModel;
+import com.dbbest.a500px.BuildConfig;
+import com.dbbest.a500px.Constant;
 import com.dbbest.a500px.db.model.PhotoModel;
-import com.dbbest.a500px.db.model.UserModel;
-import com.dbbest.a500px.net.model.ListPhotos;
-import com.dbbest.a500px.net.model.Photo;
+import com.dbbest.a500px.net.responce.ListPhotos;
+import com.dbbest.a500px.net.responce.Photo;
 import com.dbbest.a500px.net.retrofit.RestClient;
+import com.dbbest.a500px.simpleDb.PhotoEntry;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.app.DownloadManager.STATUS_FAILED;
-import static android.app.DownloadManager.STATUS_RUNNING;
-import static android.app.DownloadManager.STATUS_SUCCESSFUL;
+import timber.log.Timber;
 
 @SuppressLint("RestrictedApi")
 public class ExecuteService extends IntentService {
@@ -35,42 +34,47 @@ public class ExecuteService extends IntentService {
     protected void onHandleIntent(@Nullable Intent intent) {
 
         if (intent != null) {
-            final ResultReceiver receiver = intent.getParcelableExtra("receiver");
-            String command = intent.getStringExtra("command");
+            Timber.i("Start Service");
+            final ResultReceiver receiver = intent.getParcelableExtra(Constant.RECEIVER);
             Bundle bundle = new Bundle();
-            if (("execute").equals(command)) {
-                receiver.send(STATUS_RUNNING, Bundle.EMPTY);
+                receiver.send(Constant.STATUS_RUNNING, Bundle.EMPTY);
+                Timber.i("Running Service");
                 try {
-                    RestClient restClient = new RestClient();
-                    int count = intent.getIntExtra("count", 1);
-                    int page = intent.getIntExtra("page", 1);
-                    int size = intent.getIntExtra("image_size", 2);
+                    RestClient restClient = RestClient.getInstance();
+                    int count = intent.getIntExtra(Constant.COUNT, 1);
+                    int page = intent.getIntExtra(Constant.PAGE, 1);
+                    int size = intent.getIntExtra(Constant.IMAGE_SIZE_FLAG, 2);
 
-                    ListPhotos results = (ListPhotos) restClient.getPhotos(getApplicationContext().getString(R.string.px_consumer_key), page,
+                    ListPhotos results = restClient.getPhotos(BuildConfig.CONSUMER_KEY, page,
                             count, size);
 
-                    List<UserModel> userToSave = new ArrayList<>();
-                    List<PhotoModel> photosToSave = new ArrayList<>();
-                    List<AvatarsModel> avatarsToSave = new ArrayList<>();
+                    List<ContentValues> photosToSave = new ArrayList<>();
 
                     for (Photo photo : results.getPhotos()) {
                         PhotoModel photoModel = new PhotoModel(photo);
-                        UserModel userModel = new UserModel(photo.getUser());
-                        userToSave.add(userModel);
-                        photosToSave.add(photoModel);
-                        AvatarsModel avatarsModel = new AvatarsModel(photo.getUser().getAvatars(), userModel.getId());
-                        avatarsToSave.add(avatarsModel);
+                        photoModel.setName(photo.getUser().getFullname());
+                        photoModel.setUserId(photo.getUserId());
+                        photoModel.setAvDefUri(photo.getUser().getAvatars().getDefault().getHttps());
+                        photoModel.setAvLargeUri(photo.getUser().getAvatars().getLarge().getHttps());
+                        photoModel.setAvSmallUri(photo.getUser().getAvatars().getSmall().getHttps());
+                        photoModel.setAvTinyUri(photo.getUser().getAvatars().getTiny().getHttps());
+                        photosToSave.add(photoModel.values());
                     }
-                    App.processor().repository().photo().bulk(photosToSave);
-                    App.processor().repository().user().bulk(userToSave);
-                    App.processor().repository().avatars().bulk(avatarsToSave);
 
-                    receiver.send(STATUS_SUCCESSFUL, Bundle.EMPTY);
+                    if (photosToSave.size() > 0) {
+                        ContentValues[] cvArray = new ContentValues[photosToSave.size()];
+                        photosToSave.toArray(cvArray);
+                        int lines = App.instance().getContentResolver().bulkInsert(PhotoEntry.URI, cvArray);
+                        Timber.i("End Service inserted lines: %d", lines);
+                    }
+
+
+                    receiver.send(Constant.STATUS_SUCCESSFUL, Bundle.EMPTY);
+
                 } catch (Exception e) {
                     bundle.putString(Intent.EXTRA_TEXT, e.toString());
-                    receiver.send(STATUS_FAILED, bundle);
+                    receiver.send(Constant.STATUS_FAILED, bundle);
                 }
-            }
         }
     }
 }

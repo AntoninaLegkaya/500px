@@ -1,22 +1,16 @@
 package com.dbbest.a500px.net.retrofit;
 
-import android.text.TextUtils;
-
 import com.dbbest.a500px.BuildConfig;
-import com.dbbest.a500px.net.model.ListPhotos;
+import com.dbbest.a500px.net.responce.ListPhotos;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
-import java.net.ConnectException;
-import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
-import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -24,9 +18,10 @@ import timber.log.Timber;
 
 public class RestClient {
 
+    private static RestClient instance;
     private final RestService restService;
 
-    public RestClient() {
+    private RestClient() {
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.connectTimeout(30, TimeUnit.SECONDS);
@@ -45,65 +40,36 @@ public class RestClient {
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
         this.restService = retrofit.create(RestService.class);
+
     }
 
-
-    public Object getPhotos(String consumeKey, int page, int count, int size) {
-        return executeCall(restService.getPhotos(consumeKey, page, count, size));
+    public static RestClient getInstance() {
+        if (instance == null) {
+            instance = new RestClient();
+        }
+        return instance;
     }
 
-   private Object executeCall(Call<ListPhotos> call) {
+    public ListPhotos getPhotos(String consumeKey, int page, int count, int size) {
+//        (restService.getPhotos(consumeKey, page, count, size)).enqueue(new Callback<ListPhotos>() {
+//            @Override
+//            public void onResponse(Call<ListPhotos> call, Response<ListPhotos> response) {
+//
+//            }
+//
+//            @Override
+//            public void onFailure(Call<ListPhotos> call, Throwable t) {
+//
+//            }
+//        });
         try {
-            Response<ListPhotos> response = call.execute();
-            if (!response.isSuccessful()) {
-                Timber.w("Unsuccessful response code: %d message: %s", response.code(), response.message());
-
-            }
-
-            if (response.body() == null) {
-                if (response.errorBody() == null) {
-                    return null;
-                } else {
-                    String errorJson = response.errorBody().string();
-                    if (TextUtils.isEmpty(errorJson)) {
-                        return null;
-                    } else {
-                        Timber.w("Error Body: %s", errorJson);
-                        try {
-
-                            Timber.v("Error response normalized:");
-                            return null;
-                        } catch (Exception ex) {
-                            Timber.e(ex, "Failed to parse error json body: %s", errorJson);
-                            return null;
-                        }
-                    }
-                }
-            }
-
+            Response<ListPhotos> response = (restService.getPhotos(consumeKey, page, count, size)).execute();
             return response.body();
-
         } catch (IOException e) {
-            Timber.e(e, "Network error");
-            return handleNetworkError(e);
-        }
-    }
-
-    private Gson handleNetworkError(Throwable throwable) {
-        if (throwable != null) {
-            if (throwable instanceof SocketTimeoutException) {
-                Timber.e("Socket Timeout");
-                return null;
-            } else if (throwable instanceof UnknownHostException) {
-                Timber.e("Unable to resolve host");
-                return null;
-            } else if (throwable instanceof ConnectException) {
-                Timber.e("Failed to connect to server");
-                return null;
-            }
+            e.printStackTrace();
+            Timber.e("Error call REST %s", e.getMessage());
         }
 
-        Timber.e("An unknown exception happened");
         return null;
     }
 

@@ -13,46 +13,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dbbest.a500px.App;
+import com.dbbest.a500px.Constant;
 import com.dbbest.a500px.R;
-import com.dbbest.a500px.adapter.CardPhotoAdapter;
-import com.dbbest.a500px.db.ProviderDefinition;
 import com.dbbest.a500px.net.service.ExecuteResultReceiver;
 import com.dbbest.a500px.net.service.ExecuteService;
+import com.dbbest.a500px.simpleDb.PhotoEntry;
 
-import static android.app.DownloadManager.STATUS_FAILED;
-import static android.app.DownloadManager.STATUS_RUNNING;
-import static android.app.DownloadManager.STATUS_SUCCESSFUL;
 
 public class PhotosGalleryActivity extends AppCompatActivity implements
         ExecuteResultReceiver.Receiver {
 
-    private static final int DOWNLOAD_LIMIT = 3;
-    private static final int IMAGE_SIZE = 3;
     private static final int VISIBLE_THRESHOLD = 4;
-    private CardPhotoAdapter adapter;
     private ExecuteResultReceiver receiver;
     private TextView infoView;
     private int page;
     private boolean loading = false;
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Intent intent = getIntent();
-        if (intent != null) {
-            page = intent.getIntExtra("page", 0);
-        }
-        receiver = new ExecuteResultReceiver(new Handler());
-        receiver.setReceiver(this);
-        isEmptyCursor();
-
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        receiver.setReceiver(null);
-    }
 
 
     @Override
@@ -72,32 +47,50 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
                 int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
                 if (!loading && totalItemCount <= (lastVisibleItemPosition + VISIBLE_THRESHOLD)) {
                     page = page + 1;
-                    buildServiceCommand();
+                    startService();
                     loading = true;
                 }
             }
         });
-        adapter = new CardPhotoAdapter();
-        recyclerView.setAdapter(adapter);
+//        adapter = new CardPhotoAdapter(this,);
+//        recyclerView.setAdapter(adapter);
     }
 
-    private void buildServiceCommand() {
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Intent intent = getIntent();
+        if (intent != null) {
+            page = intent.getIntExtra(Constant.PAGE, 0);
+        }
+        receiver = new ExecuteResultReceiver(new Handler());
+        receiver.setReceiver(this);
+        getPhotosFromBd();
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        receiver.setReceiver(null);
+    }
+
+    private void startService() {
         final Intent intent = new Intent(Intent.ACTION_SYNC, null, App.instance(), ExecuteService.class);
-        intent.putExtra("receiver", receiver);
-        intent.putExtra("command", "execute");
-        intent.putExtra("image_size", IMAGE_SIZE);
-        intent.putExtra("page", page);
-        intent.putExtra("count", DOWNLOAD_LIMIT);
+        intent.putExtra(Constant.RECEIVER, receiver);
+        intent.putExtra(Constant.IMAGE_SIZE_FLAG, Constant.IMAGE_SIZE);
+        intent.putExtra(Constant.PAGE, page);
+        intent.putExtra(Constant.COUNT, Constant.DOWNLOAD_LIMIT);
         startService(intent);
     }
 
-    private boolean isEmptyCursor() {
+    private boolean getPhotosFromBd() {
         boolean isEmpty = true;
-        Cursor cursor = App.instance().getContentResolver().query(ProviderDefinition.PhotoEntry.URI, null, null, null, null);
+        Cursor cursor = App.instance().getContentResolver().query(PhotoEntry.URI, null, null, null, null);
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 infoView.setVisibility(View.GONE);
-                adapter.changeCursor(cursor);
                 isEmpty = false;
             } else {
                 infoView.setVisibility(View.VISIBLE);
@@ -112,14 +105,13 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
     public void onReceiveResult(int resultCode, Bundle resultData) {
 //        hideSpinner();
         switch (resultCode) {
-            case STATUS_RUNNING:
+            case Constant.STATUS_RUNNING:
                 break;
-            case STATUS_SUCCESSFUL:
+            case Constant.STATUS_SUCCESSFUL:
                 infoView.setVisibility(View.GONE);
-                isEmptyCursor();
                 loading = false;
                 break;
-            case STATUS_FAILED:
+            case Constant.STATUS_FAILED:
                 Toast.makeText(PhotosGalleryActivity.this,
                         "Some Error was happened! ", Toast.LENGTH_LONG)
                         .show();
@@ -140,8 +132,4 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
 //        loadingView.setVisibility(View.GONE);
 //    }
 
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-    }
 }

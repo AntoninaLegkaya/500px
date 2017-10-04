@@ -8,37 +8,45 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
-import com.dbbest.a500px.db.ProviderDefinition;
 import com.dbbest.a500px.net.service.ExecuteResultReceiver;
 import com.dbbest.a500px.net.service.ExecuteService;
+import com.dbbest.a500px.simpleDb.PhotoEntry;
 import com.dbbest.a500px.ui.PhotosGalleryActivity;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import timber.log.Timber;
 
-import static android.app.DownloadManager.STATUS_FAILED;
-import static android.app.DownloadManager.STATUS_RUNNING;
-import static android.app.DownloadManager.STATUS_SUCCESSFUL;
 
 @SuppressFBWarnings(value = "SIC_INNER_SHOULD_BE_STATIC_ANON")
 public class MainActivity extends AppCompatActivity implements ExecuteResultReceiver.Receiver {
 
-    private static final int DOWNLOAD_LIMIT = 3;
-    private static final int IMAGE_SIZE = 3;
+
     private ExecuteResultReceiver receiver;
     private int page = 0;
-    private View splashView;
 
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        Button clearBtn = (Button) findViewById(R.id.login_btn);
+
+
+        clearBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                App.instance().getContentResolver().delete(PhotoEntry.URI, null, null);
+            }
+        });
+    }
 
     @Override
     protected void onStart() {
         super.onStart();
         receiver = new ExecuteResultReceiver(new Handler());
         receiver.setReceiver(this);
-        splashView.animate()
-                .alpha(1f)
-                .setDuration(300)
-                .start();
-        isEmptyCursor();
+        getPhotosFromBd();
     }
 
     @Override
@@ -47,72 +55,56 @@ public class MainActivity extends AppCompatActivity implements ExecuteResultRece
         receiver.setReceiver(null);
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        Button clearBtn = (Button) findViewById(R.id.login_btn);
-        splashView = findViewById(R.id.image_logo);
-        splashView.setAlpha(0f);
-
-
-        clearBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                App.processor().repository().photo().removeAll();
-                App.processor().repository().user().removeAll();
-                App.processor().repository().avatars().removeAll();
-            }
-        });
-    }
-
     public void moveToGallery() {
         Intent intent = new Intent(this, PhotosGalleryActivity.class);
-        intent.putExtra("page", page);
+        intent.putExtra(Constant.PAGE, page);
         startActivity(intent);
         finish();
     }
 
-    private void buildServiceCommand() {
+    private void startService() {
         final Intent intent = new Intent(Intent.ACTION_SYNC, null, App.instance(), ExecuteService.class);
-        intent.putExtra("receiver", receiver);
-        intent.putExtra("command", "execute");
-        intent.putExtra("image_size", IMAGE_SIZE);
-        intent.putExtra("page", page);
-        intent.putExtra("count", DOWNLOAD_LIMIT);
+        intent.putExtra(Constant.RECEIVER, receiver);
+        intent.putExtra(Constant.COMMAND, "execute");
+        intent.putExtra(Constant.IMAGE_SIZE_FLAG, 3);
+        intent.putExtra(Constant.PAGE, page);
+        intent.putExtra(Constant.COUNT, Constant.DOWNLOAD_LIMIT);
         page = page + 1;
         startService(intent);
     }
 
 
-    private void isEmptyCursor() {
-        Cursor cursor = App.instance().getContentResolver().query(ProviderDefinition.PhotoEntry.URI, null, null, null, null);
+    private void getPhotosFromBd() {
+        Cursor cursor = App.instance().getContentResolver().query(PhotoEntry.URI, null, null, null, null);
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 cursor.close();
+                Timber.i("Move to gallery");
                 moveToGallery();
             } else {
-                buildServiceCommand();
+
+                startService();
             }
+        } else {
+            Timber.i("DB empty start Service");
+            startService();
         }
     }
 
     @Override
     public void onReceiveResult(int resultCode, Bundle resultData) {
         switch (resultCode) {
-            case STATUS_RUNNING:
+            case Constant.STATUS_RUNNING:
                 break;
-            case STATUS_SUCCESSFUL:
-                isEmptyCursor();
+            case Constant.STATUS_SUCCESSFUL:
+                Timber.i("Successful get data from service");
+                moveToGallery();
                 break;
-            case STATUS_FAILED:
+            case Constant.STATUS_FAILED:
+                Timber.i("Fail get data from service");
                 break;
             default:
                 break;
         }
-
-
     }
-
 }

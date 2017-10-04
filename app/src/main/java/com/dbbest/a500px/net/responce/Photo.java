@@ -1,5 +1,4 @@
-
-package com.dbbest.a500px.net.model;
+package com.dbbest.a500px.net.responce;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -558,6 +557,7 @@ public class Photo {
     public void setIsFreePhoto(Boolean isFreePhoto) {
         this.isFreePhoto = isFreePhoto;
     }
+
 
 
 }

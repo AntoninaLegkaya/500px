@@ -1,5 +1,4 @@
-
-package com.dbbest.a500px.net.model;
+package com.dbbest.a500px.net.responce;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -8,7 +7,7 @@ public class Avatars {
 
     @SerializedName("default")
     @Expose
-    private Default def;
+    private Default _default;
     @SerializedName("large")
     @Expose
     private Large large;
@@ -20,11 +19,11 @@ public class Avatars {
     private Tiny tiny;
 
     public Default getDefault() {
-        return def;
+        return _default;
     }
 
-    public void setDefault(Default def) {
-        this.def = def;
+    public void setDefault(Default _default) {
+        this._default = _default;
     }
 
     public Large getLarge() {
