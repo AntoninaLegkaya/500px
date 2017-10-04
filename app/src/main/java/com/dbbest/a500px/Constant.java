@@ -5,7 +5,7 @@ public final class Constant {
     public static final int STATUS_RUNNING = 0;
     public static final int STATUS_SUCCESSFUL = 1;
 
-    public static final int DOWNLOAD_LIMIT = 3;
+    public static final int DOWNLOAD_LIMIT = 4;
     public static final int IMAGE_SIZE = 3;
 
     public static final String PAGE = "page";

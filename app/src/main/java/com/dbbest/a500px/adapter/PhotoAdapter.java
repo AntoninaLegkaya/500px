@@ -1,24 +1,24 @@
 package com.dbbest.a500px.adapter;
 
+import android.app.Activity;
 import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.graphics.Bitmap;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
-import com.bumptech.glide.request.target.Target;
 import com.dbbest.a500px.App;
 import com.dbbest.a500px.R;
 import com.dbbest.a500px.db.model.PhotoModel;
+import com.dbbest.a500px.ui.CropSquareTransformation;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -62,6 +62,18 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
             if (!cursor.moveToPosition(position)) {
                 throw new IllegalStateException("couldn't move cursor to position " + position);
             }
+            DisplayMetrics displaymetrics = new DisplayMetrics();
+            ((Activity) holder.photoView.getContext()).getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+            //if you need three fix imageview in width
+            int devicewidth = displaymetrics.widthPixels / 3;
+
+            int deviceheight = devicewidth;
+
+            holder.photoView.getLayoutParams().width = devicewidth;
+
+            //if you need same height as width you can set devicewidth in holder.image_view.getLayoutParams().height
+            holder.photoView.getLayoutParams().height = deviceheight;
+
             holder.bind(new PhotoModel(cursor));
         }
     }
@@ -110,25 +122,17 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
 
     @SuppressFBWarnings(value = "SIC_INNER_SHOULD_BE_STATIC_ANON")
     static class PhotoViewHolder extends RecyclerView.ViewHolder {
-        CardView cv;
-        TextView nameView;
-        ImageView avatarView;
+        View cv;
         ImageView photoView;
-        View parentView;
 
         @SuppressFBWarnings(value = "URF_UNREAD_FIELD")
         PhotoViewHolder(View itemView) {
             super(itemView);
-            parentView = itemView;
-            cv = (CardView) itemView.findViewById(R.id.cardView);
-            nameView = (TextView) itemView.findViewById(R.id.text_name);
-            avatarView = (ImageView) itemView.findViewById(R.id.image_avatar);
+            cv = itemView.findViewById(R.id.card_view);
             photoView = (ImageView) itemView.findViewById(R.id.image_photo);
         }
 
         void bind(PhotoModel photo) {
-            nameView.setText(photo.getName());
-            onAvatarSet(photo.getAvDefUri(), avatarView);
             onPhotoSet(photo.getImageUrl(), photoView);
 
         }
@@ -151,9 +155,9 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
 
             Glide.with(previewView.getContext())
                     .load(fullPreviewUrl)
+                    .bitmapTransform(new CropSquareTransformation(previewView.getContext()))
                     .placeholder(R.drawable.ic_empty)
-                    .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
-                    .fitCenter().crossFade()
+                    .fitCenter()
                     .into(previewView);
         }
 

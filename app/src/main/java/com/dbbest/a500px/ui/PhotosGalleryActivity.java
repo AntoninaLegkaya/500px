@@ -8,8 +8,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
@@ -25,14 +26,13 @@ import com.dbbest.a500px.simpleDb.PhotoEntry;
 
 
 public class PhotosGalleryActivity extends AppCompatActivity implements
-        ExecuteResultReceiver.Receiver, LoaderManager.LoaderCallbacks<Cursor> {
+        ExecuteResultReceiver.Receiver, LoaderManager.LoaderCallbacks<Cursor>, SwipeRefreshLayout.OnRefreshListener {
 
-    private static final int VISIBLE_THRESHOLD = 4;
     private ExecuteResultReceiver receiver;
     private TextView infoView;
     private int page;
-    private boolean loading = false;
     private PhotoAdapter adapter;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -62,21 +62,38 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery);
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler);
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
+        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler);
         infoView = (TextView) findViewById(R.id.text_info);
-        final LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        final GridLayoutManager layoutManager = new GridLayoutManager(this, 3);
         recyclerView.setLayoutManager(layoutManager);
+        swipeRefreshLayout.setOnRefreshListener(this);
+        swipeRefreshLayout.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        swipeRefreshLayout.setRefreshing(true);
+                                        startService();
+                                    }
+                                }
+        );
+
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
 
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
+                int visibleItemCount = layoutManager.getChildCount();
                 int totalItemCount = layoutManager.getItemCount();
-                int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
-                if (!loading && totalItemCount <= (lastVisibleItemPosition + VISIBLE_THRESHOLD)) {
-                    page = page + 1;
+                int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+
+                // Load more if we have reach the end to the recyclerView
+                if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount && firstVisibleItemPosition >= 0) {
+                    swipeRefreshLayout.setRefreshing(true);
                     startService();
-                    loading = true;
                 }
             }
         });
@@ -91,18 +108,12 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
         super.onStart();
         Intent intent = getIntent();
         if (intent != null) {
-            page = intent.getIntExtra(Constant.PAGE, 0);
+            page = intent.getIntExtra(Constant.PAGE, 1);
         }
         receiver = new ExecuteResultReceiver(new Handler());
         receiver.setReceiver(this);
 
 
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        receiver.setReceiver(null);
     }
 
     public void onResume() {
@@ -111,10 +122,18 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
         getSupportLoaderManager().restartLoader(0x01, null, this);
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        receiver.setReceiver(null);
+    }
+
+
     private void startService() {
         final Intent intent = new Intent(Intent.ACTION_SYNC, null, App.instance(), ExecuteService.class);
         intent.putExtra(Constant.RECEIVER, receiver);
         intent.putExtra(Constant.IMAGE_SIZE_FLAG, Constant.IMAGE_SIZE);
+        page = page + 1;
         intent.putExtra(Constant.PAGE, page);
         intent.putExtra(Constant.COUNT, Constant.DOWNLOAD_LIMIT);
         startService(intent);
@@ -142,14 +161,13 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
                 break;
             case Constant.STATUS_SUCCESSFUL:
                 infoView.setVisibility(View.GONE);
-                loading = false;
                 adapter.notifyDataSetChanged();
+                swipeRefreshLayout.setRefreshing(false);
                 break;
             case Constant.STATUS_FAILED:
                 Toast.makeText(PhotosGalleryActivity.this,
                         "Some Error was happened! ", Toast.LENGTH_LONG)
                         .show();
-                loading = false;
                 break;
             default:
                 break;
@@ -158,7 +176,11 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
 
     }
 
-
-
-
+    @Override
+    public void onRefresh() {
+        swipeRefreshLayout.setRefreshing(true);
+        startService();
+    }
 }
+
+
