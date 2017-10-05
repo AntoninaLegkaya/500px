@@ -12,7 +12,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.dbbest.a500px.R;
-import com.dbbest.a500px.db.model.PhotoModel;
+import com.dbbest.a500px.model.PhotoModel;
 import com.dbbest.a500px.ui.CropSquareTransformation;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;

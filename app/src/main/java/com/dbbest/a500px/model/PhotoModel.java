@@ -1,4 +1,4 @@
-package com.dbbest.a500px.db.model;
+package com.dbbest.a500px.model;
 
 import android.content.ContentValues;
 import android.database.Cursor;

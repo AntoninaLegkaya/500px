@@ -11,7 +11,7 @@ import android.support.v4.os.ResultReceiver;
 import com.dbbest.a500px.App;
 import com.dbbest.a500px.BuildConfig;
 import com.dbbest.a500px.Constant;
-import com.dbbest.a500px.db.model.PhotoModel;
+import com.dbbest.a500px.model.PhotoModel;
 import com.dbbest.a500px.net.responce.ListPhotos;
 import com.dbbest.a500px.net.responce.Photo;
 import com.dbbest.a500px.net.retrofit.RestClient;

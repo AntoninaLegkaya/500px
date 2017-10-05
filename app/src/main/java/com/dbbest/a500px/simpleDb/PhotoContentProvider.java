@@ -17,7 +17,7 @@ import android.support.annotation.Nullable;
 
 import com.dbbest.a500px.App;
 import com.dbbest.a500px.BuildConfig;
-import com.dbbest.a500px.db.model.PhotoModel;
+import com.dbbest.a500px.model.PhotoModel;
 
 import net.simonvt.schematic.utils.SelectionBuilder;
 
