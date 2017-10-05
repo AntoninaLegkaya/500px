@@ -1,51 +1,123 @@
 package com.dbbest.a500px.ui;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dbbest.a500px.App;
+import com.dbbest.a500px.Constant;
 import com.dbbest.a500px.R;
-import com.dbbest.a500px.adapter.CardPhotoAdapter;
-import com.dbbest.a500px.db.ProviderDefinition;
+import com.dbbest.a500px.adapter.PhotoAdapter;
 import com.dbbest.a500px.net.service.ExecuteResultReceiver;
 import com.dbbest.a500px.net.service.ExecuteService;
+import com.dbbest.a500px.simpleDb.PhotoEntry;
 
-import static android.app.DownloadManager.STATUS_FAILED;
-import static android.app.DownloadManager.STATUS_RUNNING;
-import static android.app.DownloadManager.STATUS_SUCCESSFUL;
 
 public class PhotosGalleryActivity extends AppCompatActivity implements
-        ExecuteResultReceiver.Receiver {
+        ExecuteResultReceiver.Receiver, LoaderManager.LoaderCallbacks<Cursor>, SwipeRefreshLayout.OnRefreshListener, PhotoAdapter.PreviewCallback {
 
-    private static final int DOWNLOAD_LIMIT = 3;
-    private static final int IMAGE_SIZE = 3;
-    private static final int VISIBLE_THRESHOLD = 4;
-    private CardPhotoAdapter adapter;
     private ExecuteResultReceiver receiver;
     private TextView infoView;
     private int page;
-    private boolean loading = false;
+    private PhotoAdapter adapter;
+    private SharedPreferences preferences;
+    private SwipeRefreshLayout swipeRefreshLayout;
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new CursorLoader(this,
+                PhotoEntry.URI,
+                null,
+                null,
+                null,
+                null
+        );
+    }
+
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        getPhotosFromBd(data);
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        adapter.swapCursor(null);
+    }
+
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_gallery);
+        preferences = App.instance().getSharedPreferences(Constant.PREFS_NAME, Context.MODE_PRIVATE);
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
+        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler);
+        infoView = (TextView) findViewById(R.id.text_info);
+        final GridLayoutManager layoutManager = new GridLayoutManager(this, 3);
+        recyclerView.setLayoutManager(layoutManager);
+        swipeRefreshLayout.setOnRefreshListener(this);
+        swipeRefreshLayout.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        swipeRefreshLayout.setRefreshing(true);
+                                        startService();
+                                    }
+                                }
+        );
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                int visibleItemCount = layoutManager.getChildCount();
+                int totalItemCount = layoutManager.getItemCount();
+                int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+
+                // Load more if we have reach the end to the recyclerView
+                if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount && firstVisibleItemPosition >= 0) {
+                    swipeRefreshLayout.setRefreshing(true);
+                    startService();
+                }
+            }
+        });
+        adapter = new PhotoAdapter(this);
+        recyclerView.setAdapter(adapter);
+        getSupportLoaderManager().initLoader(Constant.LOADER_PHOTO, null, this);
+    }
+
 
     @Override
     protected void onStart() {
         super.onStart();
-        Intent intent = getIntent();
-        if (intent != null) {
-            page = intent.getIntExtra("page", 0);
-        }
+        page = (int) preferences.getLong(Constant.CURRENT_PAGE, 1);
         receiver = new ExecuteResultReceiver(new Handler());
         receiver.setReceiver(this);
-        isEmptyCursor();
+    }
 
+    public void onResume() {
+        super.onResume();
+        getSupportLoaderManager().restartLoader(0x01, null, this);
     }
 
     @Override
@@ -55,75 +127,46 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
     }
 
 
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_gallery);
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler);
-        infoView = (TextView) findViewById(R.id.text_info);
-        final LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-
-                super.onScrolled(recyclerView, dx, dy);
-                int totalItemCount = layoutManager.getItemCount();
-                int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
-                if (!loading && totalItemCount <= (lastVisibleItemPosition + VISIBLE_THRESHOLD)) {
-                    page = page + 1;
-                    buildServiceCommand();
-                    loading = true;
-                }
-            }
-        });
-        adapter = new CardPhotoAdapter();
-        recyclerView.setAdapter(adapter);
-    }
-
-    private void buildServiceCommand() {
+    private void startService() {
         final Intent intent = new Intent(Intent.ACTION_SYNC, null, App.instance(), ExecuteService.class);
-        intent.putExtra("receiver", receiver);
-        intent.putExtra("command", "execute");
-        intent.putExtra("image_size", IMAGE_SIZE);
-        intent.putExtra("page", page);
-        intent.putExtra("count", DOWNLOAD_LIMIT);
+        intent.putExtra(Constant.RECEIVER, receiver);
+        intent.putExtra(Constant.IMAGE_SIZE_FLAG, Constant.IMAGE_SIZE);
+        preferences.edit().putLong(Constant.CURRENT_PAGE, page + 1).apply();
+        page = (int) preferences.getLong(Constant.CURRENT_PAGE, page);
+        intent.putExtra(Constant.PAGE, page);
+        intent.putExtra(Constant.COUNT, Constant.DOWNLOAD_LIMIT);
         startService(intent);
     }
 
-    private boolean isEmptyCursor() {
-        boolean isEmpty = true;
-        Cursor cursor = App.instance().getContentResolver().query(ProviderDefinition.PhotoEntry.URI, null, null, null, null);
+    private void getPhotosFromBd(Cursor cursor) {
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 infoView.setVisibility(View.GONE);
-                adapter.changeCursor(cursor);
-                isEmpty = false;
+                adapter.swapCursor(cursor);
             } else {
                 infoView.setVisibility(View.VISIBLE);
                 infoView.setText(R.string.error_swap_cursor);
+                startService();
             }
 
         }
-        return isEmpty;
     }
+
 
     @Override
     public void onReceiveResult(int resultCode, Bundle resultData) {
-//        hideSpinner();
         switch (resultCode) {
-            case STATUS_RUNNING:
+            case Constant.STATUS_RUNNING:
                 break;
-            case STATUS_SUCCESSFUL:
+            case Constant.STATUS_SUCCESSFUL:
                 infoView.setVisibility(View.GONE);
-                isEmptyCursor();
-                loading = false;
+                adapter.notifyDataSetChanged();
+                swipeRefreshLayout.setRefreshing(false);
                 break;
-            case STATUS_FAILED:
+            case Constant.STATUS_FAILED:
                 Toast.makeText(PhotosGalleryActivity.this,
                         "Some Error was happened! ", Toast.LENGTH_LONG)
                         .show();
-                loading = false;
                 break;
             default:
                 break;
@@ -132,16 +175,19 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
 
     }
 
-//    private void showSpinner() {
-//        loadingView.setVisibility(View.VISIBLE);
-//    }
-//
-//    private void hideSpinner() {
-//        loadingView.setVisibility(View.GONE);
-//    }
+    @Override
+    public void onRefresh() {
+        swipeRefreshLayout.setRefreshing(true);
+        startService();
+    }
 
     @Override
-    public void onLowMemory() {
-        super.onLowMemory();
+    public void photoSelected(String name, String url) {
+        Intent intent = new Intent(this, PhotoActivity.class);
+        intent.putExtra(Constant.PHOTOGRAPH_NAME, name);
+        intent.putExtra(Constant.PHOTO_URL, url);
+        startActivity(intent);
     }
 }
+
+

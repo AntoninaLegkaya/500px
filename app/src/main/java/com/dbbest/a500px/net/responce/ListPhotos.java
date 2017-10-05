@@ -1,5 +1,5 @@
 
-package com.dbbest.a500px.net.model;
+package com.dbbest.a500px.net.responce;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -20,12 +20,7 @@ public class ListPhotos {
     @SerializedName("photos")
     @Expose
     private List<Photo> photos = null;
-    @SerializedName("filters")
-    @Expose
-    private Filters filters;
-    @SerializedName("feature")
-    @Expose
-    private String feature;
+
 
     public Integer getCurrentPage() {
         return currentPage;
@@ -58,22 +53,5 @@ public class ListPhotos {
     public void setPhotos(List<Photo> photos) {
         this.photos = photos;
     }
-
-    public Filters getFilters() {
-        return filters;
-    }
-
-    public void setFilters(Filters filters) {
-        this.filters = filters;
-    }
-
-    public String getFeature() {
-        return feature;
-    }
-
-    public void setFeature(String feature) {
-        this.feature = feature;
-    }
-
 
 }

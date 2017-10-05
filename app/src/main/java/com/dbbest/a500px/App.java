@@ -1,6 +1,6 @@
 package com.dbbest.a500px;
 
-import android.support.multidex.MultiDexApplication;
+import android.app.Application;
 
 import com.facebook.stetho.Stetho;
 
@@ -8,7 +8,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import timber.log.Timber;
 
 @SuppressFBWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
-public class App extends MultiDexApplication {
+public class App extends Application {
 
     public static final String PREF_TOKEN_SECRET = "500px.tokenSecret";
     public static final String PREF_ACCESS_TOKEN = "500px.accessToken";
@@ -32,9 +32,5 @@ public class App extends MultiDexApplication {
         Stetho.initializeWithDefaults(this);
         Timber.plant(new Timber.DebugTree());
 
-    }
-
-    public static DataProcessor processor() {
-        return DataProcessor.instance();
     }
 }

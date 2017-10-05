@@ -1,10 +1,10 @@
 
-package com.dbbest.a500px.net.model;
+package com.dbbest.a500px.net.responce;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Small {
+public class Default {
 
     @SerializedName("https")
     @Expose
@@ -17,5 +17,7 @@ public class Small {
     public void setHttps(String https) {
         this.https = https;
     }
+
+
 
 }

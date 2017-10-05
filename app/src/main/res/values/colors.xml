@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="text_color">#293d3d</color>
-    <color name="avatar_border">#e0ebeb</color>
-    <color name="photo_border">#e0ebeb</color>
 </resources>

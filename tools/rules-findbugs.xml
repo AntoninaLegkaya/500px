@@ -3,18 +3,6 @@
         <Class name="~.*\.R\$.*"/>
     </Match>
     <Match>
-        <Class name="~com\.dbbest\.a500px\.db.ApplicationContentProvider"/>
-        <Bug pattern="NP_LOAD_OF_KNOWN_NULL_VALUE"/>
-    </Match>
-    <Match>
-        <Class name="~com\.dbbest\.a500px\.db.ApplicationContentProvider"/>
-        <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
-    </Match>
-    <Match>
-        <Class name="~com\.dbbest\.a500px\.MainActivity"/>
-        <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON"/>
-    </Match>
-    <Match>
         <Class name="~com\.dbbest\.a500px\.MainActivity"/>
         <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
     </Match>

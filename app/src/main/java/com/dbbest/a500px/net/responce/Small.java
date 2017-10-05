@@ -1,10 +1,10 @@
 
-package com.dbbest.a500px.net.model;
+package com.dbbest.a500px.net.responce;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Large {
+public class Small {
 
     @SerializedName("https")
     @Expose

@@ -3,7 +3,8 @@ def buildMajorVersion = 0 //Major version of application - not back support with
 def buildMinorVersion = 0 //Minor version of application - has partial or full back support with previous versions
 // (Partially different, major bug fixes)
 def buildPatchVersion = buildNumberInt() - lastBuildNumberUpdate //Patch version of application - has full back support with previous versions
-def  SERVER_ENDPOINT = "\"https://api.500px.com/\""
+def SERVER_ENDPOINT = "\"https://api.500px.com/\""
+
 def buildNumberInt() {
     if (project.hasProperty('buildNumber')) {
         return Integer.parseInt(buildNumber)
@@ -39,6 +40,7 @@ ext {
     SERVER_ENDPOINT = "\"https://api.500px.com/\""
 
     API_SERVER_ENDPOINT = 'API_SERVER_ENDPOINT'
+    CONSUMER_KEY = 'CONSUMER_KEY'
 
 
 }
