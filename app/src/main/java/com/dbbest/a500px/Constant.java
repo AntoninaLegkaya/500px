@@ -6,7 +6,7 @@ public final class Constant {
     public static final int STATUS_SUCCESSFUL = 1;
 
     public static final int DOWNLOAD_LIMIT = 4;
-    public static final int IMAGE_SIZE = 3;
+    public static final String IMAGE_SIZE = "2,3";
 
     public static final String PAGE = "page";
     public static final String RECEIVER = "receiver";
@@ -16,4 +16,6 @@ public final class Constant {
 
     public static final int LOADER_PHOTO = 0;
 
+    public static final String PHOTOGRAPH_NAME = "name";
+    public static final String PHOTO_URL = "url";
 }

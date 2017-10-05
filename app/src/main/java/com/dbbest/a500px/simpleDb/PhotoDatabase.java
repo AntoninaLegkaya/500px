@@ -10,7 +10,8 @@ public class PhotoDatabase extends SQLiteOpenHelper {
     public static final String PHOTO_TABLE =
             "CREATE TABLE photo (" + PhotoEntry.COLUMN_USER_ID + " INTEGER," +
                     PhotoEntry.COLUMN_USER_NAME + " TEXT," +
-                    PhotoEntry.COLUMN_IMAGE_URL + " TEXT," +
+                    PhotoEntry.COLUMN_PREVIEW_URL + " TEXT," +
+                    PhotoEntry.COLUMN_PHOTO_URL + " TEXT," +
                     PhotoEntry.COLUMN_URL_DEFAULT + " TEXT," +
                     PhotoEntry.COLUMN_URL_LARGE + " TEXT," +
                     PhotoEntry.COLUMN_URL_SMALL + " TEXT," +

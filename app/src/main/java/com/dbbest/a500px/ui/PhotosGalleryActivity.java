@@ -26,7 +26,7 @@ import com.dbbest.a500px.simpleDb.PhotoEntry;
 
 
 public class PhotosGalleryActivity extends AppCompatActivity implements
-        ExecuteResultReceiver.Receiver, LoaderManager.LoaderCallbacks<Cursor>, SwipeRefreshLayout.OnRefreshListener {
+        ExecuteResultReceiver.Receiver, LoaderManager.LoaderCallbacks<Cursor>, SwipeRefreshLayout.OnRefreshListener, PhotoAdapter.PreviewCallback {
 
     private ExecuteResultReceiver receiver;
     private TextView infoView;
@@ -97,7 +97,7 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
                 }
             }
         });
-        adapter = new PhotoAdapter();
+        adapter = new PhotoAdapter(this);
         recyclerView.setAdapter(adapter);
         getSupportLoaderManager().initLoader(Constant.LOADER_PHOTO, null, this);
     }
@@ -112,8 +112,6 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
         }
         receiver = new ExecuteResultReceiver(new Handler());
         receiver.setReceiver(this);
-
-
     }
 
     public void onResume() {
@@ -180,6 +178,14 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
     public void onRefresh() {
         swipeRefreshLayout.setRefreshing(true);
         startService();
+    }
+
+    @Override
+    public void photoSelected(String name, String url) {
+        Intent intent = new Intent(this, PhotoActivity.class);
+        intent.putExtra(Constant.PHOTOGRAPH_NAME, name);
+        intent.putExtra(Constant.PHOTO_URL, url);
+        startActivity(intent);
     }
 }
 

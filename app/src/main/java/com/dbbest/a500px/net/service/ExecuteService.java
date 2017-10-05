@@ -43,7 +43,7 @@ public class ExecuteService extends IntentService {
                     RestClient restClient = RestClient.getInstance();
                     int count = intent.getIntExtra(Constant.COUNT, 1);
                     int page = intent.getIntExtra(Constant.PAGE, 1);
-                    int size = intent.getIntExtra(Constant.IMAGE_SIZE_FLAG, 2);
+                    String size = intent.getStringExtra(Constant.IMAGE_SIZE_FLAG);
 
                     ListPhotos results = restClient.getPhotos(BuildConfig.CONSUMER_KEY, page,
                             count, size);
@@ -52,13 +52,6 @@ public class ExecuteService extends IntentService {
 
                     for (Photo photo : results.getPhotos()) {
                         PhotoModel photoModel = new PhotoModel(photo);
-                        photoModel.setName(photo.getUser().getFullname());
-                        photoModel.setImageUrl(photo.getImageUrl());
-                        photoModel.setUserId(photo.getUserId());
-                        photoModel.setAvDefUri(photo.getUser().getAvatars().getDefault().getHttps());
-                        photoModel.setAvLargeUri(photo.getUser().getAvatars().getLarge().getHttps());
-                        photoModel.setAvSmallUri(photo.getUser().getAvatars().getSmall().getHttps());
-                        photoModel.setAvTinyUri(photo.getUser().getAvatars().getTiny().getHttps());
                         photosToSave.add(photoModel.values());
                     }
 

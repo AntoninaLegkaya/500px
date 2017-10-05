@@ -9,7 +9,8 @@ public class PhotoEntry implements BaseColumns {
     public static final String PATH_PHOTO = "photo";
     public static final String COLUMN_USER_ID = "user_id";
     public static final String COLUMN_USER_NAME = "user_name";
-    public static final String COLUMN_IMAGE_URL = "image_url";
+    public static final String COLUMN_PREVIEW_URL = "preview_url";
+    public static final String COLUMN_PHOTO_URL = "photo_url";
     public static final String COLUMN_URL_DEFAULT = "def";
     public static final String COLUMN_URL_LARGE = "large";
     public static final String COLUMN_URL_SMALL = "small";

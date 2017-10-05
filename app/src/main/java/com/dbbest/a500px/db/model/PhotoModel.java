@@ -3,15 +3,19 @@ package com.dbbest.a500px.db.model;
 import android.content.ContentValues;
 import android.database.Cursor;
 
+import com.dbbest.a500px.net.responce.Image;
 import com.dbbest.a500px.net.responce.Photo;
 import com.dbbest.a500px.simpleDb.DBUtil;
 import com.dbbest.a500px.simpleDb.PhotoEntry;
+
+import java.util.List;
 
 public class PhotoModel {
 
     private Integer id;
     private Integer userId;
-    private String imageUrl;
+    private String previewUrl;
+    private String photoUrl;
     private String name;
     private String avDefUri;
     private String avLargeUri;
@@ -21,7 +25,8 @@ public class PhotoModel {
     public PhotoModel(Cursor cursor) {
         id = DBUtil.getInteger(cursor, PhotoEntry._ID);
         userId = DBUtil.getInteger(cursor, PhotoEntry.COLUMN_USER_ID);
-        imageUrl = DBUtil.getString(cursor, PhotoEntry.COLUMN_IMAGE_URL);
+        previewUrl = DBUtil.getString(cursor, PhotoEntry.COLUMN_PREVIEW_URL);
+        photoUrl = DBUtil.getString(cursor, PhotoEntry.COLUMN_PHOTO_URL);
         name = DBUtil.getString(cursor, PhotoEntry.COLUMN_USER_NAME);
         avDefUri = DBUtil.getString(cursor, PhotoEntry.COLUMN_URL_DEFAULT);
         avLargeUri = DBUtil.getString(cursor, PhotoEntry.COLUMN_URL_LARGE);
@@ -32,7 +37,11 @@ public class PhotoModel {
     public PhotoModel(Photo photo) {
         this.id = photo.getId();
         this.userId = photo.getUserId();
-        this.imageUrl = photo.getImageUrl();
+        List<Image> images = photo.getImages();
+        if (!images.isEmpty() && images.size() == 2) {
+            this.previewUrl = images.get(0).getHttpsUrl();
+            this.photoUrl = images.get(1).getHttpsUrl();
+        }
         this.name = photo.getUser().getFullname();
         this.avDefUri = (photo.getUser()).getAvatars().getDefault().getHttps();
         this.avLargeUri = (photo.getUser()).getAvatars().getLarge().getHttps();
@@ -40,12 +49,16 @@ public class PhotoModel {
         this.avTinyUri = (photo.getUser()).getAvatars().getTiny().getHttps();
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public String getPreviewUrl() {
+        return previewUrl;
+    }
+
+    public void setPreviewUrl(String previewUrl) {
+        this.previewUrl = previewUrl;
     }
 
     public Integer getId() {
@@ -109,7 +122,8 @@ public class PhotoModel {
         values.put(PhotoEntry._ID, id);
         values.put(PhotoEntry.COLUMN_USER_ID, userId);
         values.put(PhotoEntry.COLUMN_USER_NAME, name);
-        values.put(PhotoEntry.COLUMN_IMAGE_URL, imageUrl);
+        values.put(PhotoEntry.COLUMN_PREVIEW_URL, previewUrl);
+        values.put(PhotoEntry.COLUMN_PHOTO_URL, photoUrl);
         values.put(PhotoEntry.COLUMN_URL_DEFAULT, avDefUri);
         values.put(PhotoEntry.COLUMN_URL_LARGE, avLargeUri);
         values.put(PhotoEntry.COLUMN_URL_SMALL, avSmallUri);
@@ -117,4 +131,7 @@ public class PhotoModel {
         return values;
     }
 
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
 }

@@ -3,9 +3,6 @@ package com.dbbest.a500px.adapter;
 import android.app.Activity;
 import android.database.Cursor;
 import android.database.DataSetObserver;
-import android.graphics.Bitmap;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -14,8 +11,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.BitmapImageViewTarget;
-import com.dbbest.a500px.App;
 import com.dbbest.a500px.R;
 import com.dbbest.a500px.db.model.PhotoModel;
 import com.dbbest.a500px.ui.CropSquareTransformation;
@@ -24,8 +19,10 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHolder> {
 
+    private final PreviewCallback previewCallback;
     private Cursor cursor;
     private boolean dataValid;
+
     private final DataSetObserver dataSetObserver = new DataSetObserver() {
         @Override
         public void onChanged() {
@@ -41,8 +38,8 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
     };
     private int rowIDColumn;
 
-    public PhotoAdapter() {
-        //Nothing here
+    public PhotoAdapter(PreviewCallback previewCallback) {
+        this.previewCallback = previewCallback;
     }
 
     @Override
@@ -64,17 +61,17 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
             }
             DisplayMetrics displaymetrics = new DisplayMetrics();
             ((Activity) holder.photoView.getContext()).getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-            //if you need three fix imageview in width
-            int devicewidth = displaymetrics.widthPixels / 3;
-
-            int deviceheight = devicewidth;
-
-            holder.photoView.getLayoutParams().width = devicewidth;
-
-            //if you need same height as width you can set devicewidth in holder.image_view.getLayoutParams().height
-            holder.photoView.getLayoutParams().height = deviceheight;
-
-            holder.bind(new PhotoModel(cursor));
+            int deviceWidth = displaymetrics.widthPixels / 3;
+            holder.photoView.getLayoutParams().width = deviceWidth;
+            holder.photoView.getLayoutParams().height = deviceWidth;
+            final PhotoModel photo = new PhotoModel(cursor);
+            holder.bind(photo);
+            holder.photoView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    previewCallback.photoSelected(photo.getName(), photo.getPhotoUrl());
+                }
+            });
         }
     }
 
@@ -120,6 +117,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         return oldCursor;
     }
 
+
     @SuppressFBWarnings(value = "SIC_INNER_SHOULD_BE_STATIC_ANON")
     static class PhotoViewHolder extends RecyclerView.ViewHolder {
         View cv;
@@ -130,25 +128,12 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
             super(itemView);
             cv = itemView.findViewById(R.id.card_view);
             photoView = (ImageView) itemView.findViewById(R.id.image_photo);
-        }
-
-        void bind(PhotoModel photo) {
-            onPhotoSet(photo.getImageUrl(), photoView);
 
         }
 
-        void onAvatarSet(String fullPreviewUrl, final ImageView previewView) {
+        void bind(final PhotoModel photo) {
+            onPhotoSet(photo.getPreviewUrl(), photoView);
 
-            Glide.with(previewView.getContext()).load(fullPreviewUrl).asBitmap().centerCrop().placeholder(R.drawable.ic_user_places_holder)
-                    .into(new BitmapImageViewTarget(previewView) {
-                        @Override
-                        protected void setResource(Bitmap resource) {
-                            RoundedBitmapDrawable circularBitmapDrawable =
-                                    RoundedBitmapDrawableFactory.create(App.instance().getResources(), resource);
-                            circularBitmapDrawable.setCircular(true);
-                            previewView.setImageDrawable(circularBitmapDrawable);
-                        }
-                    });
         }
 
         void onPhotoSet(String fullPreviewUrl, ImageView previewView) {
@@ -160,6 +145,12 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
                     .fitCenter()
                     .into(previewView);
         }
+
+    }
+
+  public  interface PreviewCallback {
+
+        void photoSelected(String name, String photoUrl);
 
     }
 }

@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements ExecuteResultRece
         final Intent intent = new Intent(Intent.ACTION_SYNC, null, App.instance(), ExecuteService.class);
         intent.putExtra(Constant.RECEIVER, receiver);
         intent.putExtra(Constant.COMMAND, "execute");
-        intent.putExtra(Constant.IMAGE_SIZE_FLAG, 3);
+        intent.putExtra(Constant.IMAGE_SIZE_FLAG, Constant.IMAGE_SIZE);
         intent.putExtra(Constant.PAGE, page);
         intent.putExtra(Constant.COUNT, Constant.DOWNLOAD_LIMIT);
         page = page + 1;

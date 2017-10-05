@@ -9,6 +9,7 @@ import com.bumptech.glide.load.engine.Resource;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.BitmapResource;
 
+
 public class CropSquareTransformation implements Transformation<Bitmap> {
 
     private final BitmapPool mBitmapPool;

@@ -48,7 +48,7 @@ public final class RestClient {
         return instance;
     }
 
-    public ListPhotos getPhotos(String consumeKey, int page, int count, int size) {
+    public ListPhotos getPhotos(String consumeKey, int page, int count, String size) {
         try {
             Response<ListPhotos> response = (restService.getPhotos(consumeKey, page, count, size)).execute();
             return response.body();

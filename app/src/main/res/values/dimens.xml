@@ -1,6 +1,6 @@
 <resources>
     <dimen name="margin">15dp</dimen>
-
+    <dimen name="margin_5">5dp</dimen>
     <dimen name="margin_20dp">20dp</dimen>
     <dimen name="margin_100dp">100dp</dimen>
     <dimen name="width_200dp">200dp</dimen>
