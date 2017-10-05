@@ -1,6 +1,8 @@
 package com.dbbest.a500px;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,8 +25,6 @@ public class MainActivity extends AppCompatActivity implements ExecuteResultRece
 
 
     private static final int FADE_DELAY = 5000;
-    private ExecuteResultReceiver receiver;
-    private int page = 0;
     private final Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
@@ -34,7 +34,9 @@ public class MainActivity extends AppCompatActivity implements ExecuteResultRece
             return true;
         }
     });
-
+    private ExecuteResultReceiver receiver;
+    private SharedPreferences preferences;
+    private int page = 1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements ExecuteResultRece
                 App.instance().getContentResolver().delete(PhotoEntry.URI, null, null);
             }
         });
+        preferences = App.instance().getSharedPreferences(Constant.PREFS_NAME, Context.MODE_PRIVATE);
     }
 
 
@@ -69,7 +72,6 @@ public class MainActivity extends AppCompatActivity implements ExecuteResultRece
 
     public void moveToGallery() {
         Intent intent = new Intent(this, PhotosGalleryActivity.class);
-        intent.putExtra(Constant.PAGE, page);
         startActivity(intent);
         finish();
     }
@@ -81,7 +83,6 @@ public class MainActivity extends AppCompatActivity implements ExecuteResultRece
         intent.putExtra(Constant.IMAGE_SIZE_FLAG, Constant.IMAGE_SIZE);
         intent.putExtra(Constant.PAGE, page);
         intent.putExtra(Constant.COUNT, Constant.DOWNLOAD_LIMIT);
-        page = page + 1;
         startService(intent);
     }
 
@@ -89,8 +90,9 @@ public class MainActivity extends AppCompatActivity implements ExecuteResultRece
     private void getPhotosFromBd() {
         Cursor cursor = App.instance().getContentResolver().query(PhotoEntry.URI, null, null, null, null);
         if (cursor != null && cursor.moveToFirst()) {
+            cursor.moveToLast();
+            page = (int) preferences.getLong(Constant.CURRENT_PAGE, 1);
             cursor.close();
-            Timber.i("Move to gallery");
             handler.sendEmptyMessageDelayed(1, FADE_DELAY);
         } else {
             Timber.i("DB empty start Service");
@@ -104,7 +106,8 @@ public class MainActivity extends AppCompatActivity implements ExecuteResultRece
             case Constant.STATUS_RUNNING:
                 break;
             case Constant.STATUS_SUCCESSFUL:
-                Timber.i("Successful get data from service");
+                Timber.i("Successful get data from page: %d", page);
+                preferences.edit().putLong(Constant.CURRENT_PAGE, page).apply();
                 moveToGallery();
                 break;
             case Constant.STATUS_FAILED:

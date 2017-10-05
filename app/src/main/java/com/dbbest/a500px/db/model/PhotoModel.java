@@ -49,9 +49,6 @@ public class PhotoModel {
         this.avTinyUri = (photo.getUser()).getAvatars().getTiny().getHttps();
     }
 
-    public void setPhotoUrl(String photoUrl) {
-        this.photoUrl = photoUrl;
-    }
 
     public String getPreviewUrl() {
         return previewUrl;
@@ -133,5 +130,9 @@ public class PhotoModel {
 
     public String getPhotoUrl() {
         return photoUrl;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
     }
 }

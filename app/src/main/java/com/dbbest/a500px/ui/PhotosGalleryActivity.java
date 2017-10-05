@@ -1,6 +1,8 @@
 package com.dbbest.a500px.ui;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
@@ -32,6 +34,7 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
     private TextView infoView;
     private int page;
     private PhotoAdapter adapter;
+    private SharedPreferences preferences;
     private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
@@ -62,6 +65,7 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery);
+        preferences = App.instance().getSharedPreferences(Constant.PREFS_NAME, Context.MODE_PRIVATE);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler);
         infoView = (TextView) findViewById(R.id.text_info);
@@ -106,17 +110,13 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-        Intent intent = getIntent();
-        if (intent != null) {
-            page = intent.getIntExtra(Constant.PAGE, 1);
-        }
+        page = (int) preferences.getLong(Constant.CURRENT_PAGE, 1);
         receiver = new ExecuteResultReceiver(new Handler());
         receiver.setReceiver(this);
     }
 
     public void onResume() {
         super.onResume();
-        // Restart loader so that it refreshes displayed items according to database
         getSupportLoaderManager().restartLoader(0x01, null, this);
     }
 
@@ -131,7 +131,8 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
         final Intent intent = new Intent(Intent.ACTION_SYNC, null, App.instance(), ExecuteService.class);
         intent.putExtra(Constant.RECEIVER, receiver);
         intent.putExtra(Constant.IMAGE_SIZE_FLAG, Constant.IMAGE_SIZE);
-        page = page + 1;
+        preferences.edit().putLong(Constant.CURRENT_PAGE, page + 1).apply();
+        page = (int) preferences.getLong(Constant.CURRENT_PAGE, page);
         intent.putExtra(Constant.PAGE, page);
         intent.putExtra(Constant.COUNT, Constant.DOWNLOAD_LIMIT);
         startService(intent);

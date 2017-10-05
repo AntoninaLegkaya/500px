@@ -18,4 +18,7 @@ public final class Constant {
 
     public static final String PHOTOGRAPH_NAME = "name";
     public static final String PHOTO_URL = "url";
+    public static final String PREFS_NAME = "LoadPrefs";
+
+    public static final String CURRENT_PAGE = "current_page";
 }
