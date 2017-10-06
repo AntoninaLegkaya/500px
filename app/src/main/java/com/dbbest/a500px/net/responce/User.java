@@ -13,10 +13,6 @@ public class User {
     @Expose
     private String fullname;
 
-    @SerializedName("avatars")
-    @Expose
-    private Avatars avatars;
-
     public Integer getId() {
         return id;
     }
@@ -25,16 +21,8 @@ public class User {
         this.id = id;
     }
 
-    public String getFullname() {
+    public String getFullName() {
         return fullname;
-    }
-
-    public Avatars getAvatars() {
-        return avatars;
-    }
-
-    public void setAvatars(Avatars avatars) {
-        this.avatars = avatars;
     }
 
 }

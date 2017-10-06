@@ -2,7 +2,6 @@ package com.dbbest.a500px.net.retrofit;
 
 import com.dbbest.a500px.BuildConfig;
 import com.dbbest.a500px.net.responce.ListPhotos;
-import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -29,7 +28,6 @@ public final class RestClient {
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         builder.addNetworkInterceptor(httpLoggingInterceptor);
-        builder.addNetworkInterceptor(new StethoInterceptor());
         OkHttpClient okHttpClient = builder.build();
         Gson gson = new GsonBuilder()
                 .setLenient()
@@ -53,8 +51,7 @@ public final class RestClient {
             Response<ListPhotos> response = (restService.getPhotos(consumeKey, page, count, size)).execute();
             return response.body();
         } catch (IOException e) {
-            e.printStackTrace();
-            Timber.e("Error call REST %s", e.getMessage());
+            Timber.e(e, "Error call REST");
         }
 
         return null;

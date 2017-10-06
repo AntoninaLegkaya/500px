@@ -1,7 +1,5 @@
 <resources>
     <string name="app_name">500px</string>
-    <!--<string name="px_consumer_secret">BPsFryPn9rkXKxyokGBwJnt95LLNUsp05LoLLbKV</string>-->
     <string name="gallery_info_string">Here was You gallery!</string>
-    <string name="get_label">Clear Storage</string>
     <string name="error_swap_cursor">Nothing come in</string>
 </resources>

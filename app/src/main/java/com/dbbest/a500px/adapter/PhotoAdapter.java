@@ -1,10 +1,8 @@
 package com.dbbest.a500px.adapter;
 
-import android.app.Activity;
 import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +11,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.dbbest.a500px.R;
 import com.dbbest.a500px.model.PhotoModel;
+import com.dbbest.a500px.simpleDb.PhotoEntry;
 import com.dbbest.a500px.ui.CropSquareTransformation;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -38,14 +37,14 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
     };
     private int rowIDColumn;
 
-    public PhotoAdapter(PreviewCallback previewCallback) {
-        this.previewCallback = previewCallback;
+    public PhotoAdapter(PreviewCallback callback) {
+        this.previewCallback = callback;
     }
 
     @Override
     public PhotoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.card_layout, parent, false);
+                .inflate(R.layout.item_layout, parent, false);
         return new PhotoViewHolder(view);
     }
 
@@ -59,14 +58,10 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
             if (!cursor.moveToPosition(position)) {
                 throw new IllegalStateException("couldn't move cursor to position " + position);
             }
-            DisplayMetrics displaymetrics = new DisplayMetrics();
-            ((Activity) holder.photoView.getContext()).getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-            int deviceWidth = displaymetrics.widthPixels / 3;
-            holder.photoView.getLayoutParams().width = deviceWidth;
-            holder.photoView.getLayoutParams().height = deviceWidth;
+
             final PhotoModel photo = new PhotoModel(cursor);
             holder.bind(photo);
-            holder.photoView.setOnClickListener(new View.OnClickListener() {
+            holder.previewPhoto.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     previewCallback.photoSelected(photo.getName(), photo.getPhotoUrl());
@@ -99,7 +94,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
             return null;
         }
         Cursor oldCursor = cursor;
-        if (oldCursor != null && dataSetObserver != null) {
+        if (oldCursor != null) {
             oldCursor.unregisterDataSetObserver(dataSetObserver);
         }
         cursor = newCursor;
@@ -110,7 +105,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
 
         } else {
             newCursor.registerDataSetObserver(dataSetObserver);
-            rowIDColumn = newCursor.getColumnIndexOrThrow("_id");
+            rowIDColumn = newCursor.getColumnIndexOrThrow(PhotoEntry._ID);
             dataValid = true;
             notifyDataSetChanged();
         }
@@ -118,39 +113,34 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
     }
 
 
+    public interface PreviewCallback {
+
+        void photoSelected(String name, String photoUrl);
+
+    }
+
     @SuppressFBWarnings(value = "SIC_INNER_SHOULD_BE_STATIC_ANON")
     static class PhotoViewHolder extends RecyclerView.ViewHolder {
-        View cv;
-        ImageView photoView;
+        View preview;
+        ImageView previewPhoto;
 
         @SuppressFBWarnings(value = "URF_UNREAD_FIELD")
-        PhotoViewHolder(View itemView) {
-            super(itemView);
-            cv = itemView.findViewById(R.id.card_view);
-            photoView = (ImageView) itemView.findViewById(R.id.image_photo);
+        PhotoViewHolder(View view) {
+            super(view);
+            preview = view.findViewById(R.id.layout_preview);
+            previewPhoto = (ImageView) view.findViewById(R.id.image_photo);
 
         }
 
         void bind(final PhotoModel photo) {
-            onPhotoSet(photo.getPreviewUrl(), photoView);
 
-        }
-
-        void onPhotoSet(String fullPreviewUrl, ImageView previewView) {
-
-            Glide.with(previewView.getContext())
-                    .load(fullPreviewUrl)
-                    .bitmapTransform(new CropSquareTransformation(previewView.getContext()))
+            Glide.with(previewPhoto.getContext())
+                    .load(photo.getPreviewUrl())
+                    .bitmapTransform(new CropSquareTransformation(previewPhoto.getContext()))
                     .placeholder(R.drawable.ic_empty)
-                    .fitCenter()
-                    .into(previewView);
+                    .centerCrop()
+                    .into(previewPhoto);
         }
-
-    }
-
-  public  interface PreviewCallback {
-
-        void photoSelected(String name, String photoUrl);
 
     }
 }
