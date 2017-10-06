@@ -45,7 +45,6 @@ ext {
             support  : supportLibraryVersion,
             timber   : timberVersion,
             okhttp   : '3.8.1',
-            schematic: '0.7.0',
             glide    : '3.7.0',
             retrofit : '2.3.0',
             findbugs : '3.0.1'
