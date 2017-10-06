@@ -7,6 +7,7 @@ import android.support.v4.os.ResultReceiver;
 
 @SuppressLint("RestrictedApi")
 public class ExecuteResultReceiver extends ResultReceiver {
+
     private Receiver receiver;
 
     /**
@@ -27,9 +28,7 @@ public class ExecuteResultReceiver extends ResultReceiver {
     @Override
     protected void onReceiveResult(int resultCode, Bundle resultData) {
         if (receiver != null) {
-
             receiver.onReceiveResult(resultCode, resultData);
-
         }
     }
 

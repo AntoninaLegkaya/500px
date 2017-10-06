@@ -17,10 +17,6 @@ public class PhotoModel {
     private String previewUrl;
     private String photoUrl;
     private String name;
-    private String avDefUri;
-    private String avLargeUri;
-    private String avSmallUri;
-    private String avTinyUri;
 
     public PhotoModel(Cursor cursor) {
         id = DBUtil.getInteger(cursor, PhotoEntry._ID);
@@ -28,10 +24,6 @@ public class PhotoModel {
         previewUrl = DBUtil.getString(cursor, PhotoEntry.COLUMN_PREVIEW_URL);
         photoUrl = DBUtil.getString(cursor, PhotoEntry.COLUMN_PHOTO_URL);
         name = DBUtil.getString(cursor, PhotoEntry.COLUMN_USER_NAME);
-        avDefUri = DBUtil.getString(cursor, PhotoEntry.COLUMN_URL_DEFAULT);
-        avLargeUri = DBUtil.getString(cursor, PhotoEntry.COLUMN_URL_LARGE);
-        avSmallUri = DBUtil.getString(cursor, PhotoEntry.COLUMN_URL_SMALL);
-        avTinyUri = DBUtil.getString(cursor, PhotoEntry.COLUMN_URL_TINY);
     }
 
     public PhotoModel(Photo photo) {
@@ -42,11 +34,7 @@ public class PhotoModel {
             this.previewUrl = images.get(0).getHttpsUrl();
             this.photoUrl = images.get(1).getHttpsUrl();
         }
-        this.name = photo.getUser().getFullname();
-        this.avDefUri = (photo.getUser()).getAvatars().getDefault().getHttps();
-        this.avLargeUri = (photo.getUser()).getAvatars().getLarge().getHttps();
-        this.avSmallUri = (photo.getUser()).getAvatars().getSmall().getHttps();
-        this.avTinyUri = (photo.getUser()).getAvatars().getTiny().getHttps();
+        this.name = photo.getUser().getFullName();
     }
 
 
@@ -82,37 +70,6 @@ public class PhotoModel {
         this.name = name;
     }
 
-    public String getAvDefUri() {
-        return avDefUri;
-    }
-
-    public void setAvDefUri(String avDefUri) {
-        this.avDefUri = avDefUri;
-    }
-
-    public String getAvLargeUri() {
-        return avLargeUri;
-    }
-
-    public void setAvLargeUri(String avLargeUri) {
-        this.avLargeUri = avLargeUri;
-    }
-
-    public String getAvSmallUri() {
-        return avSmallUri;
-    }
-
-    public void setAvSmallUri(String avSmallUri) {
-        this.avSmallUri = avSmallUri;
-    }
-
-    public String getAvTinyUri() {
-        return avTinyUri;
-    }
-
-    public void setAvTinyUri(String avTinyUri) {
-        this.avTinyUri = avTinyUri;
-    }
 
     public ContentValues values() {
         ContentValues values = new ContentValues();
@@ -121,10 +78,6 @@ public class PhotoModel {
         values.put(PhotoEntry.COLUMN_USER_NAME, name);
         values.put(PhotoEntry.COLUMN_PREVIEW_URL, previewUrl);
         values.put(PhotoEntry.COLUMN_PHOTO_URL, photoUrl);
-        values.put(PhotoEntry.COLUMN_URL_DEFAULT, avDefUri);
-        values.put(PhotoEntry.COLUMN_URL_LARGE, avLargeUri);
-        values.put(PhotoEntry.COLUMN_URL_SMALL, avSmallUri);
-        values.put(PhotoEntry.COLUMN_URL_TINY, avTinyUri);
         return values;
     }
 
