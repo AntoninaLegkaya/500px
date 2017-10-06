@@ -33,7 +33,6 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
     public static final String CURRENT_PAGE = "current_page";
     public static final int LOADER_PHOTO = 0;
     public static final String PREFS_NAME = "LoadPrefs";
-
     private ExecuteResultReceiver receiver;
     private TextView infoView;
     private int page;
@@ -51,7 +50,6 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
                 infoView.setVisibility(View.VISIBLE);
                 infoView.setText(R.string.error_swap_cursor);
             }
-
         }
     }
 
@@ -63,7 +61,6 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
         receiver.setReceiver(this);
 
         getContentResolver().delete(PhotoEntry.URI, null, null);
-
         preferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 
         Timber.plant(new Timber.DebugTree());
@@ -73,12 +70,9 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
         infoView = (TextView) findViewById(R.id.text_info);
         final GridLayoutManager layoutManager = new GridLayoutManager(this, 3);
         recyclerView.setLayoutManager(layoutManager);
-
         page = page + 1;
-
         preferences.edit().putLong(CURRENT_PAGE, page).apply();
         startService(ExecuteService.startService(getApplicationContext(), receiver, page));
-
         swipeRefreshLayout.setOnRefreshListener(this);
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -104,20 +98,18 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-
-
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        receiver.setReceiver(null);
     }
 
     @Override
     public void onResume() {
         super.onResume();
         getSupportLoaderManager().restartLoader(0x01, null, this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        receiver.setReceiver(null);
     }
 
     @Override
@@ -130,7 +122,6 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
                 null
         );
     }
-
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
@@ -153,15 +144,11 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
                 swipeRefreshLayout.setRefreshing(false);
                 break;
             case ExecuteService.STATUS_FAILED:
-                Toast.makeText(PhotosGalleryActivity.this,
-                        "Some Error was happened! ", Toast.LENGTH_LONG)
-                        .show();
+                Toast.makeText(PhotosGalleryActivity.this, "Some Error was happened! ", Toast.LENGTH_LONG).show();
                 break;
             default:
                 break;
         }
-
-
     }
 
     @Override

@@ -39,7 +39,6 @@ public final class RestClient {
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
         this.restService = retrofit.create(RestService.class);
-
     }
 
     public static RestClient getInstance() {
@@ -53,7 +52,6 @@ public final class RestClient {
         } catch (IOException e) {
             Timber.e(e, "Error call REST");
         }
-
         return null;
     }
 

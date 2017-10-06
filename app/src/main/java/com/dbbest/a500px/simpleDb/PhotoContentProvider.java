@@ -31,7 +31,6 @@ public class PhotoContentProvider extends ContentProvider {
 
     private SQLiteOpenHelper database;
 
-
     @Override
     public boolean onCreate() {
         database = new PhotoDatabase(getContext());
@@ -154,5 +153,4 @@ public class PhotoContentProvider extends ContentProvider {
         }
         return ids;
     }
-
 }
