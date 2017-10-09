@@ -5,13 +5,8 @@ buildscript {
         jcenter()
     }
     dependencies {
-        // databinding trouble
         classpath 'com.android.tools.build:gradle:2.3.3'
     }
-}
-
-plugins {
-    id "me.tatarka.retrolambda" version "3.6.0"
 }
 
 allprojects {
