@@ -8,9 +8,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class PhotoDatabase extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1;
+    private static final String APP_NAME = "500px";
 
     PhotoDatabase(Context context) {
-        super(context.getApplicationContext(), "500px", null, DATABASE_VERSION);
+        super(context.getApplicationContext(), APP_NAME, null, DATABASE_VERSION);
     }
 
     @Override

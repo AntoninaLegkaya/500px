@@ -58,7 +58,6 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
             if (!cursor.moveToPosition(position)) {
                 throw new IllegalStateException("couldn't move cursor to position " + position);
             }
-
             final PhotoModel photo = new PhotoModel(cursor);
             holder.bind(photo);
             holder.previewView.setOnClickListener(new View.OnClickListener() {
@@ -69,7 +68,6 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
             });
         }
     }
-
 
     @Override
     public long getItemId(int position) {
@@ -112,11 +110,8 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         return oldCursor;
     }
 
-
     public interface PreviewCallback {
-
         void photoSelected(String name, String photoUrl);
-
     }
 
     @SuppressFBWarnings(value = "SIC_INNER_SHOULD_BE_STATIC_ANON")
@@ -127,11 +122,9 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         PhotoViewHolder(View view) {
             super(view);
             previewView = (ImageView) view.findViewById(R.id.image_photo);
-
         }
 
         void bind(final PhotoModel photo) {
-
             Glide.with(previewView.getContext())
                     .load(photo.getPreviewUrl())
                     .bitmapTransform(new CropSquareTransformation(previewView.getContext()))
@@ -139,7 +132,6 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
                     .centerCrop()
                     .into(previewView);
         }
-
     }
 }
 
