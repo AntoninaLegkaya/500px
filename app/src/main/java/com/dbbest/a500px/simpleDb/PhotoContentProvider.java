@@ -103,8 +103,7 @@ public class PhotoContentProvider extends ContentProvider {
     }
 
     @Override
-    public int delete(@NonNull Uri uri, @Nullable String selection,
-                      @Nullable String[] selectionArgs) {
+    public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
         final SQLiteDatabase db = database.getWritableDatabase();
         if (MATCHER.match(uri) == PHOTO_ENTRY_URI && getContext() != null) {
             final int count = db.delete(
@@ -117,8 +116,7 @@ public class PhotoContentProvider extends ContentProvider {
     }
 
     @Override
-    public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection,
-                      @Nullable String[] selectionArgs) {
+    public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
         final SQLiteDatabase db = database.getWritableDatabase();
         if (MATCHER.match(uri) ==
                 PHOTO_ENTRY_URI) {
@@ -135,8 +133,7 @@ public class PhotoContentProvider extends ContentProvider {
 
     @NonNull
     @Override
-    public ContentProviderResult[] applyBatch(@NonNull ArrayList<ContentProviderOperation> ops)
-            throws OperationApplicationException {
+    public ContentProviderResult[] applyBatch(@NonNull ArrayList<ContentProviderOperation> ops) throws OperationApplicationException {
         ContentProviderResult[] results;
         final SQLiteDatabase db = database.getWritableDatabase();
         db.beginTransaction();
