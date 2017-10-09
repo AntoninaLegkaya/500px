@@ -13,7 +13,7 @@ import java.util.List;
 public class PhotoModel {
 
     private Integer id;
-    private Integer userId;
+    private  final Integer userId;
     private String previewUrl;
     private String photoUrl;
     private String name;

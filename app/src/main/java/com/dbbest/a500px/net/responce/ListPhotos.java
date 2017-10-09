@@ -9,7 +9,7 @@ public class ListPhotos {
 
     @SerializedName("photos")
     @Expose
-    private List<Photo> photos = null;
+    private List<Photo> photos;
 
     public List<Photo> getPhotos() {
         return photos;
