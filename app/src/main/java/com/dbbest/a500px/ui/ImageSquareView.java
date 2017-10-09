@@ -7,9 +7,9 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 
 public class ImageSquareView extends android.support.v7.widget.AppCompatImageView {
+
     public ImageSquareView(@NonNull Context context) {
         super(context);
-
     }
 
     public ImageSquareView(@NonNull Context context, @Nullable AttributeSet attrs) {

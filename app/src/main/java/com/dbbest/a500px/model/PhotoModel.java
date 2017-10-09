@@ -37,13 +37,8 @@ public class PhotoModel {
         this.name = photo.getUser().getFullName();
     }
 
-
     public String getPreviewUrl() {
         return previewUrl;
-    }
-
-    public void setPreviewUrl(String previewUrl) {
-        this.previewUrl = previewUrl;
     }
 
     public Integer getId() {
@@ -52,14 +47,6 @@ public class PhotoModel {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
     }
 
     public String getName() {
@@ -85,7 +72,4 @@ public class PhotoModel {
         return photoUrl;
     }
 
-    public void setPhotoUrl(String photoUrl) {
-        this.photoUrl = photoUrl;
-    }
 }

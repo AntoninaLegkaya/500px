@@ -61,7 +61,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
 
             final PhotoModel photo = new PhotoModel(cursor);
             holder.bind(photo);
-            holder.previewPhoto.setOnClickListener(new View.OnClickListener() {
+            holder.previewView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     previewCallback.photoSelected(photo.getName(), photo.getPhotoUrl());
@@ -121,25 +121,23 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
 
     @SuppressFBWarnings(value = "SIC_INNER_SHOULD_BE_STATIC_ANON")
     static class PhotoViewHolder extends RecyclerView.ViewHolder {
-        View preview;
-        ImageView previewPhoto;
+        ImageView previewView;
 
         @SuppressFBWarnings(value = "URF_UNREAD_FIELD")
         PhotoViewHolder(View view) {
             super(view);
-            preview = view.findViewById(R.id.layout_preview);
-            previewPhoto = (ImageView) view.findViewById(R.id.image_photo);
+            previewView = (ImageView) view.findViewById(R.id.image_photo);
 
         }
 
         void bind(final PhotoModel photo) {
 
-            Glide.with(previewPhoto.getContext())
+            Glide.with(previewView.getContext())
                     .load(photo.getPreviewUrl())
-                    .bitmapTransform(new CropSquareTransformation(previewPhoto.getContext()))
+                    .bitmapTransform(new CropSquareTransformation(previewView.getContext()))
                     .placeholder(R.drawable.ic_empty)
                     .centerCrop()
-                    .into(previewPhoto);
+                    .into(previewView);
         }
 
     }
