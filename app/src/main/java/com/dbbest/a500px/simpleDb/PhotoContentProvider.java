@@ -39,8 +39,8 @@ public class PhotoContentProvider extends ContentProvider {
 
     @Nullable
     @Override
-    public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection,
-                        @Nullable String[] selectionArgs, @Nullable String sortOrder) {
+    public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs,
+                        @Nullable String sortOrder) {
         final SQLiteDatabase db = database.getReadableDatabase();
         if (MATCHER.match(uri) == PHOTO_ENTRY_URI && getContext() != null) {
             Cursor cursor = db.query(

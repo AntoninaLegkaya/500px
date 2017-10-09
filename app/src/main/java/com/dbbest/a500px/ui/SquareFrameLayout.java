@@ -9,21 +9,20 @@ import android.widget.FrameLayout;
 
 public class SquareFrameLayout extends FrameLayout {
 
-  public SquareFrameLayout(@NonNull Context context) {
-    super(context);
+    public SquareFrameLayout(@NonNull Context context) {
+        super(context);
+    }
 
-  }
+    public SquareFrameLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
+        super(context, attrs);
+    }
 
-  public SquareFrameLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
-    super(context, attrs);
-  }
+    public SquareFrameLayout(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+    }
 
-  public SquareFrameLayout(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
-    super(context, attrs, defStyleAttr);
-  }
-
-  @Override
-  protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-    super.onMeasure(widthMeasureSpec, widthMeasureSpec);
-  }
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, widthMeasureSpec);
+    }
 }

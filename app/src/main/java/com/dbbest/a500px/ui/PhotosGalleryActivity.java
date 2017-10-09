@@ -25,8 +25,8 @@ import com.dbbest.a500px.simpleDb.PhotoEntry;
 import timber.log.Timber;
 
 
-public class PhotosGalleryActivity extends AppCompatActivity implements
-        ExecuteResultReceiver.Receiver, LoaderManager.LoaderCallbacks<Cursor>, SwipeRefreshLayout.OnRefreshListener, PhotoAdapter.PreviewCallback {
+public class PhotosGalleryActivity extends AppCompatActivity implements ExecuteResultReceiver.Receiver, LoaderManager.LoaderCallbacks<Cursor>,
+        SwipeRefreshLayout.OnRefreshListener, PhotoAdapter.PreviewCallback {
 
     public static final int LOADER_PHOTO = 0;
     private ExecuteResultReceiver receiver;
@@ -41,11 +41,8 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_gallery);
         receiver = new ExecuteResultReceiver(new Handler());
         receiver.setReceiver(this);
-
         getContentResolver().delete(PhotoEntry.URI, null, null);
-
         Timber.plant(new Timber.DebugTree());
-
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler);
         infoView = (TextView) findViewById(R.id.text_info);
@@ -65,7 +62,8 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
                 if (lastItemPosition >= visibleItemCount - totalItemCount / 2) {
                     page = page + 1;
                     swipeRefreshLayout.setRefreshing(true);
-                    startService(ExecuteService.startService(PhotosGalleryActivity.this, receiver, page));
+                    startService(ExecuteService.startService(PhotosGalleryActivity.this, receiver,
+                            page));
                 }
             }
         });
@@ -123,7 +121,8 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
                 swipeRefreshLayout.setRefreshing(false);
                 break;
             case ExecuteService.STATUS_FAILED:
-                Toast.makeText(PhotosGalleryActivity.this, "Some Error was happened! ", Toast.LENGTH_LONG).show();
+                Toast.makeText(PhotosGalleryActivity.this, "Some Error was happened! ",
+                        Toast.LENGTH_LONG).show();
                 break;
             default:
                 break;

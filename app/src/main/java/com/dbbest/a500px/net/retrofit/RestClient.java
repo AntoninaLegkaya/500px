@@ -47,13 +47,13 @@ public final class RestClient {
 
     public ListPhotos getPhotos(String consumeKey, int page, int count, String size) {
         try {
-            Response<ListPhotos> response = (restService.getPhotos(consumeKey, page, count, size)).execute();
+            Response<ListPhotos> response =
+                    (restService.getPhotos(consumeKey, page, count, size)).execute();
             return response.body();
         } catch (IOException e) {
             Timber.e(e, "Error call REST");
         }
         return null;
     }
-
 }
 

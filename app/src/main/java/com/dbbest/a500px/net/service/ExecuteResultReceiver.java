@@ -10,19 +10,12 @@ public class ExecuteResultReceiver extends ResultReceiver {
 
     private Receiver receiver;
 
-    /**
-     * Create a new ResultReceive to receive results.  Your
-     * {@link #onReceiveResult} method will be called from the thread running
-     * <var>handler</var> if given, or from an arbitrary thread if null.
-     *
-     * @param handler
-     */
     public ExecuteResultReceiver(Handler handler) {
         super(handler);
     }
 
-    public void setReceiver(Receiver receiver) {
-        this.receiver = receiver;
+    public void setReceiver(Receiver r) {
+        this.receiver = r;
     }
 
     @Override

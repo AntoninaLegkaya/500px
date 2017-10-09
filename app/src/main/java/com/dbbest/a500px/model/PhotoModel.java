@@ -12,8 +12,8 @@ import java.util.List;
 
 public class PhotoModel {
 
+    private final Integer userId;
     private Integer id;
-    private  final Integer userId;
     private String previewUrl;
     private String photoUrl;
     private String name;
@@ -45,18 +45,17 @@ public class PhotoModel {
         return id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setId(Integer idPhoto) {
+        this.id = idPhoto;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setName(String s) {
+        this.name = s;
     }
-
 
     public ContentValues values() {
         ContentValues values = new ContentValues();

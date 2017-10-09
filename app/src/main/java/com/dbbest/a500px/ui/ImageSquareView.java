@@ -16,7 +16,8 @@ public class ImageSquareView extends android.support.v7.widget.AppCompatImageVie
         super(context, attrs);
     }
 
-    public ImageSquareView(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
+    public ImageSquareView(@NonNull Context context, @Nullable AttributeSet attrs,
+                           @AttrRes int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
