@@ -12,13 +12,12 @@ import com.bumptech.glide.load.resource.bitmap.BitmapResource;
 
 public class CropSquareTransformation implements Transformation<Bitmap> {
 
-    private final BitmapPool mBitmapPool;
-    private int mWidth;
-    private int mHeight;
+    private final BitmapPool bitmapPool;
+    private int width;
+    private int height;
 
     public CropSquareTransformation(Context context) {
-
-        this.mBitmapPool = Glide.get(context).getBitmapPool();
+        this.bitmapPool = Glide.get(context).getBitmapPool();
     }
 
     @Override
@@ -26,19 +25,18 @@ public class CropSquareTransformation implements Transformation<Bitmap> {
         Bitmap source = resource.get();
         int size = Math.min(source.getWidth(), source.getHeight());
 
-        mWidth = (source.getWidth() - size) / 2;
-        mHeight = (source.getHeight() - size) / 2;
+        width = (source.getWidth() - size) / 2;
+        height = (source.getHeight() - size) / 2;
 
-        Bitmap bitmap = Bitmap.createBitmap(source, mWidth, mHeight, size, size);
+        Bitmap bitmap = Bitmap.createBitmap(source, width, height, size, size);
         if (bitmap.equals(source)) {
             source.recycle();
         }
-
-        return BitmapResource.obtain(bitmap, mBitmapPool);
+        return BitmapResource.obtain(bitmap, bitmapPool);
     }
 
     @Override
     public String getId() {
-        return "CropSquareTransformation(width=" + mWidth + ", height=" + mHeight + ")";
+        return "CropSquareTransformation(width=" + width + ", height=" + height + ")";
     }
 }

@@ -65,7 +65,7 @@ public class PhotosGalleryActivity extends AppCompatActivity implements
                 if (lastItemPosition >= visibleItemCount - totalItemCount / 2) {
                     page = page + 1;
                     swipeRefreshLayout.setRefreshing(true);
-                    startService(ExecuteService.startService(getApplicationContext(), receiver, page));
+                    startService(ExecuteService.startService(PhotosGalleryActivity.this, receiver, page));
                 }
             }
         });

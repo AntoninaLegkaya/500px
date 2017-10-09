@@ -12,6 +12,4 @@ public class Image {
     public String getHttpsUrl() {
         return httpsUrl;
     }
-
-
 }
