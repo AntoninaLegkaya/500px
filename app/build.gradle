@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'me.tatarka.retrolambda'
 apply from: "$project.rootDir/tools/build-utils.gradle"
 apply from: "$project.rootDir/keystore/signing-config.gradle"
 apply from: "$project.rootDir/tools/script-findbugs.gradle"
