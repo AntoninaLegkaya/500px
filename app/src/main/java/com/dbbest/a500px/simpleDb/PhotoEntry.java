@@ -10,7 +10,7 @@ public class PhotoEntry {
     public static final String COLUMN_USER_NAME = "user_name";
     public static final String COLUMN_PREVIEW_URL = "preview_url";
     public static final String COLUMN_PHOTO_URL = "photo_url";
-    public static final String SQL_CREATE_PHOTO_TABLE =
+    static final String SQL_CREATE_PHOTO_TABLE =
             "CREATE TABLE photo (" + PhotoEntry.COLUMN_USER_ID + " INTEGER," +
                     PhotoEntry.COLUMN_USER_NAME + " TEXT," +
                     PhotoEntry.COLUMN_PREVIEW_URL + " TEXT," +

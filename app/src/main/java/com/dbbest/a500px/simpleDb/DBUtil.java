@@ -8,7 +8,6 @@ public final class DBUtil {
     private DBUtil() {
     }
 
-    @Nullable
     public static int getInteger(Cursor cursor, String columnName) {
         int columnIndex = cursor.getColumnIndexOrThrow(columnName);
         return cursor.getInt(columnIndex);

@@ -32,7 +32,6 @@ public class ExecuteService extends IntentService {
     private static final String IMAGE_SIZE_FLAG = "image_size";
     private static final String IMAGE_SIZE = "2,3";
 
-
     public ExecuteService() {
         super("ExecuteService");
     }
