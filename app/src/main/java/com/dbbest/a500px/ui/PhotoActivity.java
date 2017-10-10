@@ -27,17 +27,13 @@ public class PhotoActivity extends AppCompatActivity {
             String url = intent.getStringExtra(PHOTO_URL);
             if (name != null) {
                 nameView.setText(name);
-                onPhotoSet(url, photoView);
+                Glide.with(photoView.getContext())
+                        .load(url)
+                        .bitmapTransform(new CropSquareTransformation(photoView.getContext()))
+                        .placeholder(R.drawable.ic_empty)
+                        .fitCenter()
+                        .into(photoView);
             }
         }
-    }
-
-    void onPhotoSet(String fullPreviewUrl, ImageView previewView) {
-        Glide.with(previewView.getContext())
-                .load(fullPreviewUrl)
-                .bitmapTransform(new CropSquareTransformation(previewView.getContext()))
-                .placeholder(R.drawable.ic_empty)
-                .fitCenter()
-                .into(previewView);
     }
 }
