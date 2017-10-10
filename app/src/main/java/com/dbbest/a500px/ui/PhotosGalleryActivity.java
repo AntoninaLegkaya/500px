@@ -58,7 +58,6 @@ public class PhotosGalleryActivity extends AppCompatActivity implements ExecuteR
                 int visibleItemCount = layoutManager.getChildCount();
                 int totalItemCount = layoutManager.getItemCount();
                 int lastItemPosition = layoutManager.findLastVisibleItemPosition();
-
                 if (lastItemPosition >= visibleItemCount - totalItemCount / 2) {
                     page = page + 1;
                     swipeRefreshLayout.setRefreshing(true);
@@ -121,8 +120,7 @@ public class PhotosGalleryActivity extends AppCompatActivity implements ExecuteR
                 swipeRefreshLayout.setRefreshing(false);
                 break;
             case ExecuteService.STATUS_FAILED:
-                Toast.makeText(PhotosGalleryActivity.this, "Some Error was happened! ",
-                        Toast.LENGTH_LONG).show();
+                Toast.makeText(PhotosGalleryActivity.this, "Some Error was happened! ", Toast.LENGTH_LONG).show();
                 break;
             default:
                 break;
