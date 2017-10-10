@@ -1,15 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.dbbest.a500px.ui.SquareFrameLayout
+<com.dbbest.a500px.ui.ImageSquareView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/layout_preview"
+    android:id="@+id/image_photo"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="@dimen/padding">
-
-    <com.dbbest.a500px.ui.ImageSquareView
-        android:id="@+id/image_photo"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center_vertical"
-        android:scaleType="centerCrop" />
-</com.dbbest.a500px.ui.SquareFrameLayout>
+    android:layout_gravity="center_vertical"
+    android:scaleType="centerCrop" />

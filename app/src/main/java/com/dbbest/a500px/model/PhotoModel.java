@@ -5,15 +5,15 @@ import android.database.Cursor;
 
 import com.dbbest.a500px.net.responce.Image;
 import com.dbbest.a500px.net.responce.Photo;
-import com.dbbest.a500px.simpleDb.DBUtil;
-import com.dbbest.a500px.simpleDb.PhotoEntry;
+import com.dbbest.a500px.data.DBUtil;
+import com.dbbest.a500px.data.PhotoEntry;
 
 import java.util.List;
 
 public class PhotoModel {
 
-    private final Integer userId;
-    private Integer id;
+    private final int userId;
+    private int id;
     private String previewUrl;
     private String photoUrl;
     private String name;

@@ -10,9 +10,8 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.dbbest.a500px.R;
+import com.dbbest.a500px.data.PhotoEntry;
 import com.dbbest.a500px.model.PhotoModel;
-import com.dbbest.a500px.simpleDb.PhotoEntry;
-import com.dbbest.a500px.ui.CropSquareTransformation;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -127,7 +126,6 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         void bind(final PhotoModel photo) {
             Glide.with(previewView.getContext())
                     .load(photo.getPreviewUrl())
-                    .bitmapTransform(new CropSquareTransformation(previewView.getContext()))
                     .placeholder(R.drawable.ic_empty)
                     .centerCrop()
                     .into(previewView);

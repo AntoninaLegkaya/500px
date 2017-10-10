@@ -33,7 +33,7 @@
             android:exported="false" />
 
         <provider
-            android:name="com.dbbest.a500px.simpleDb.PhotoContentProvider"
+            android:name="com.dbbest.a500px.data.PhotoContentProvider"
             android:authorities="${applicationId}.provider.PhotoContentProvider"
             android:exported="false" />
 
