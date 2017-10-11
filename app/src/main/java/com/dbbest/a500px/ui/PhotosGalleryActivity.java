@@ -22,8 +22,6 @@ import com.dbbest.a500px.data.PhotoEntry;
 import com.dbbest.a500px.net.service.ExecuteResultReceiver;
 import com.dbbest.a500px.net.service.ExecuteService;
 
-import timber.log.Timber;
-
 
 public class PhotosGalleryActivity extends AppCompatActivity implements ExecuteResultReceiver.Receiver, LoaderManager.LoaderCallbacks<Cursor>,
         SwipeRefreshLayout.OnRefreshListener, PhotoAdapter.PreviewCallback {
@@ -42,12 +40,11 @@ public class PhotosGalleryActivity extends AppCompatActivity implements ExecuteR
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery);
-        page = 1;
         receiver = new ExecuteResultReceiver(new Handler());
 
         getContentResolver().delete(PhotoEntry.URI, null, null);
         startService(ExecuteService.startService(this, receiver, page));
-        Timber.plant(new Timber.DebugTree());
+
 
         page = 1;
         startService(ExecuteService.startService(this, receiver, page));
@@ -70,8 +67,8 @@ public class PhotosGalleryActivity extends AppCompatActivity implements ExecuteR
                 int lastItemPosition = ((GridLayoutManager) recycler.getLayoutManager()).findLastVisibleItemPosition();
                 if (!loading && (lastItemPosition >= totalItemCount - DOWNLOAD_LIMIT / 2)) {
                     page = page + 1;
-                    startService(ExecuteService.startService(PhotosGalleryActivity.this, receiver,
-                            page));
+                    loading = true;
+                    startService(ExecuteService.startService(PhotosGalleryActivity.this, receiver, page));
                 }
             }
         });
@@ -147,7 +144,7 @@ public class PhotosGalleryActivity extends AppCompatActivity implements ExecuteR
     @Override
     public void onRefresh() {
         getContentResolver().delete(PhotoEntry.URI, null, null);
-        page = page + 1;
+        page = 1;
         startService(ExecuteService.startService(this, receiver, page));
     }
 
