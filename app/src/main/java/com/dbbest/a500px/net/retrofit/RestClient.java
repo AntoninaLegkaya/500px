@@ -28,7 +28,9 @@ public final class RestClient {
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         builder.addNetworkInterceptor(httpLoggingInterceptor);
-        OkHttpClient okHttpClient = builder.build();
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .retryOnConnectionFailure(true)
+                .build();
         Gson gson = new GsonBuilder()
                 .setLenient()
                 .create();

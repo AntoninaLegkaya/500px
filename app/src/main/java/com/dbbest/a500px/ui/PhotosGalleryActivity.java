@@ -43,8 +43,6 @@ public class PhotosGalleryActivity extends AppCompatActivity implements ExecuteR
         receiver = new ExecuteResultReceiver(new Handler());
 
         getContentResolver().delete(PhotoEntry.URI, null, null);
-        startService(ExecuteService.startService(this, receiver, page));
-
 
         page = 1;
         startService(ExecuteService.startService(this, receiver, page));
