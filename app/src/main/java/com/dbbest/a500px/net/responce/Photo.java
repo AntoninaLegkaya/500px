@@ -1,6 +1,5 @@
 package com.dbbest.a500px.net.responce;
 
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -11,30 +10,25 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 public class Photo {
 
     @SerializedName("id")
-    @Expose
-    private Integer id;
+    private int id;
 
     @SerializedName("user_id")
-    @Expose
-    private Integer userId;
+    private int userId;
 
     @SerializedName("name")
-    @Expose
     private String name;
 
     @SerializedName("images")
-    @Expose
     private List<Image> images;
 
     @SerializedName("user")
-    @Expose
     private User user;
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 

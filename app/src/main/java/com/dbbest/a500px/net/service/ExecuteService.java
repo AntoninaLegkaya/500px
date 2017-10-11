@@ -14,7 +14,7 @@ import com.dbbest.a500px.model.PhotoModel;
 import com.dbbest.a500px.net.responce.ListPhotos;
 import com.dbbest.a500px.net.responce.Photo;
 import com.dbbest.a500px.net.retrofit.RestClient;
-import com.dbbest.a500px.simpleDb.PhotoEntry;
+import com.dbbest.a500px.data.PhotoEntry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +25,7 @@ public class ExecuteService extends IntentService {
     public static final int STATUS_FAILED = -1;
     public static final int STATUS_RUNNING = 0;
     public static final int STATUS_SUCCESSFUL = 1;
-    public static final int DOWNLOAD_LIMIT = 10;
+    public static final int DOWNLOAD_LIMIT = 50;
     private static final String PAGE = "page";
     private static final String RECEIVER = "receiver";
     private static final String COUNT = "command";

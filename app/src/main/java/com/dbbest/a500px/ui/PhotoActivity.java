@@ -29,9 +29,8 @@ public class PhotoActivity extends AppCompatActivity {
                 nameView.setText(name);
                 Glide.with(photoView.getContext())
                         .load(url)
-                        .bitmapTransform(new CropSquareTransformation(photoView.getContext()))
                         .placeholder(R.drawable.ic_empty)
-                        .fitCenter()
+                        .centerCrop()
                         .into(photoView);
             }
         }

@@ -1,4 +1,4 @@
-package com.dbbest.a500px.simpleDb;
+package com.dbbest.a500px.data;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

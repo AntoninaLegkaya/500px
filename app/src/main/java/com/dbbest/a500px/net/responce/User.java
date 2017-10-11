@@ -1,23 +1,20 @@
 package com.dbbest.a500px.net.responce;
 
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class User {
 
     @SerializedName("id")
-    @Expose
-    private Integer id;
+    private int id;
 
     @SerializedName("fullname")
-    @Expose
     private String fullname;
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
