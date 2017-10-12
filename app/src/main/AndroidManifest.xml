@@ -30,7 +30,7 @@
             android:theme="@style/AppTheme"/>
 
         <service
-            android:name=".net.service.ExecuteService"
+            android:name=".net.service.BindingExecuteService"
             android:exported="false"/>
 
         <provider

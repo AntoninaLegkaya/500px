@@ -1,9 +1,13 @@
 package com.dbbest.a500px.ui;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -19,33 +23,35 @@ import android.widget.Toast;
 import com.dbbest.a500px.R;
 import com.dbbest.a500px.adapter.PhotoAdapter;
 import com.dbbest.a500px.data.PhotoEntry;
-import com.dbbest.a500px.net.service.ExecuteResultReceiver;
-import com.dbbest.a500px.net.service.ExecuteService;
+import com.dbbest.a500px.net.service.BindingExecuteService;
+import com.dbbest.a500px.net.service.Client;
+import com.dbbest.a500px.net.service.Producer;
+
+import timber.log.Timber;
 
 
-public class PhotosGalleryActivity extends AppCompatActivity implements ExecuteResultReceiver.Receiver, LoaderManager.LoaderCallbacks<Cursor>,
+public class PhotosGalleryActivity extends AppCompatActivity implements Client, LoaderManager.LoaderCallbacks<Cursor>,
         SwipeRefreshLayout.OnRefreshListener, PhotoAdapter.PreviewCallback {
 
     public static final int LOADER_PHOTO = 0;
     public static final int DOWNLOAD_LIMIT = 50;
     private static final int SPAN_COUNT = 3;
-    private ExecuteResultReceiver receiver;
+    private final ServiceConnection connection = new ActiveConnection();
     private TextView infoView;
     private int page;
     private PhotoAdapter adapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private boolean loading;
+    private Producer producer;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery);
-        receiver = new ExecuteResultReceiver(new Handler());
 
         getContentResolver().delete(PhotoEntry.URI, null, null);
 
-        page = 1;
-        startService(ExecuteService.startService(this, receiver, page));
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(this);
@@ -66,7 +72,7 @@ public class PhotosGalleryActivity extends AppCompatActivity implements ExecuteR
                 if (!loading && (lastItemPosition >= totalItemCount - DOWNLOAD_LIMIT / 2)) {
                     page = page + 1;
                     loading = true;
-                    startService(ExecuteService.startService(PhotosGalleryActivity.this, receiver, page));
+                    producer.executeService(BindingExecuteService.startService(PhotosGalleryActivity.this, page));
                 }
             }
         });
@@ -78,13 +84,14 @@ public class PhotosGalleryActivity extends AppCompatActivity implements ExecuteR
     protected void onStart() {
         super.onStart();
         getSupportLoaderManager().restartLoader(LOADER_PHOTO, null, this);
-        receiver.setReceiver(this);
+        bindService(new Intent(PhotosGalleryActivity.this, BindingExecuteService.class), connection, Context.BIND_AUTO_CREATE);
+
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        receiver.setReceiver(null);
+        unbindService(connection);
     }
 
     @Override
@@ -117,33 +124,11 @@ public class PhotosGalleryActivity extends AppCompatActivity implements ExecuteR
     }
 
     @Override
-    public void onReceiveResult(int resultCode, Bundle resultData) {
-        switch (resultCode) {
-            case ExecuteService.STATUS_RUNNING:
-                loading = true;
-                swipeRefreshLayout.setRefreshing(true);
-                break;
-            case ExecuteService.STATUS_SUCCESSFUL:
-                infoView.setVisibility(View.GONE);
-                adapter.notifyDataSetChanged();
-                swipeRefreshLayout.setRefreshing(false);
-                loading = false;
-                break;
-            case ExecuteService.STATUS_FAILED:
-                loading = false;
-                swipeRefreshLayout.setRefreshing(false);
-                Toast.makeText(PhotosGalleryActivity.this, "Some Error was happened! ", Toast.LENGTH_LONG).show();
-                break;
-            default:
-                break;
-        }
-    }
-
-    @Override
     public void onRefresh() {
         getContentResolver().delete(PhotoEntry.URI, null, null);
         page = 1;
-        startService(ExecuteService.startService(this, receiver, page));
+        loading = true;
+        producer.executeService(BindingExecuteService.startService(PhotosGalleryActivity.this, page));
     }
 
     @Override
@@ -152,6 +137,54 @@ public class PhotosGalleryActivity extends AppCompatActivity implements ExecuteR
         intent.putExtra(PhotoActivity.PHOTOGRAPH_NAME, name);
         intent.putExtra(PhotoActivity.PHOTO_URL, url);
         startActivity(intent);
+    }
+
+    @Override
+    public void onRequestStatusChanged(final int status) {
+        switch (status) {
+            case BindingExecuteService.STATUS_RUNNING:
+                loading = true;
+                swipeRefreshLayout.setRefreshing(true);
+                break;
+            case BindingExecuteService.STATUS_SUCCESSFUL:
+                infoView.setVisibility(View.GONE);
+                adapter.notifyDataSetChanged();
+                swipeRefreshLayout.setRefreshing(false);
+                loading = false;
+                break;
+            case BindingExecuteService.STATUS_FAILED:
+                loading = false;
+                swipeRefreshLayout.setRefreshing(false);
+                Toast.makeText(PhotosGalleryActivity.this, "Some Error was happened! ", Toast.LENGTH_LONG).show();
+                break;
+            default:
+
+                break;
+        }
+    }
+
+    private class ActiveConnection implements ServiceConnection {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            Timber.i("Service is binding....start Connection");
+            producer = (Producer) service;
+            producer.registerHandler(new Handler());
+            producer.addClient(PhotosGalleryActivity.this);
+            onRequestStatusChanged(BindingExecuteService.STATUS_RUNNING);
+            page = 1;
+            producer.executeService(BindingExecuteService.startService(PhotosGalleryActivity.this, page));
+
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            if (producer != null) {
+                producer.removeClient(PhotosGalleryActivity.this);
+                producer = null;
+                Timber.i("Service ....Stop Connection");
+            }
+        }
     }
 
 }
