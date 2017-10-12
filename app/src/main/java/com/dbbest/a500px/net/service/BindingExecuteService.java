@@ -22,8 +22,6 @@ import com.dbbest.a500px.net.retrofit.RestClient;
 import java.util.ArrayList;
 import java.util.List;
 
-import timber.log.Timber;
-
 public class BindingExecuteService extends Service {
 
     public static final int DOWNLOAD_LIMIT = 50;
@@ -95,11 +93,12 @@ public class BindingExecuteService extends Service {
         }
 
         public void executeService(final Intent workIntent) {
-            Timber.i("Service ....execute Request");
+
             localHandler.post(new Runnable() {
                 @Override
                 public void run() {
                     if (workIntent != null) {
+                        serviceClient.onRequestStatusChanged(STATUS_RUNNING);
                         RestClient restClient = RestClient.getInstance();
                         int count = workIntent.getIntExtra(COUNT, 5);
                         int page = workIntent.getIntExtra(PAGE, 1);
@@ -145,7 +144,6 @@ public class BindingExecuteService extends Service {
             uiHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    Timber.i("Service ....back Result");
                     client.onRequestStatusChanged(status);
                 }
             });

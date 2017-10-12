@@ -70,8 +70,8 @@ public class PhotosGalleryActivity extends AppCompatActivity implements Client, 
                 int totalItemCount = recycler.getLayoutManager().getItemCount();
                 int lastItemPosition = ((GridLayoutManager) recycler.getLayoutManager()).findLastVisibleItemPosition();
                 if (!loading && (lastItemPosition >= totalItemCount - DOWNLOAD_LIMIT / 2)) {
-                    page = page + 1;
                     loading = true;
+                    page = page + 1;
                     producer.executeService(BindingExecuteService.startService(PhotosGalleryActivity.this, page));
                 }
             }
@@ -85,7 +85,6 @@ public class PhotosGalleryActivity extends AppCompatActivity implements Client, 
         super.onStart();
         getSupportLoaderManager().restartLoader(LOADER_PHOTO, null, this);
         bindService(new Intent(PhotosGalleryActivity.this, BindingExecuteService.class), connection, Context.BIND_AUTO_CREATE);
-
     }
 
     @Override
@@ -171,10 +170,8 @@ public class PhotosGalleryActivity extends AppCompatActivity implements Client, 
             producer = (Producer) service;
             producer.registerHandler(new Handler());
             producer.addClient(PhotosGalleryActivity.this);
-            onRequestStatusChanged(BindingExecuteService.STATUS_RUNNING);
-            page = 1;
+            page = page + 1;
             producer.executeService(BindingExecuteService.startService(PhotosGalleryActivity.this, page));
-
         }
 
         @Override
