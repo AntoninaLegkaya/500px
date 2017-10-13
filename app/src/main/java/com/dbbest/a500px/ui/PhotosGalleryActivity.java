@@ -72,7 +72,7 @@ public class PhotosGalleryActivity extends AppCompatActivity implements Client, 
                 if (!loading && (lastItemPosition >= totalItemCount - DOWNLOAD_LIMIT / 2)) {
                     loading = true;
                     page = page + 1;
-                    producer.executeService(BindingExecuteService.startService(PhotosGalleryActivity.this, page));
+                    producer.executeService(page);
                 }
             }
         });
@@ -125,9 +125,8 @@ public class PhotosGalleryActivity extends AppCompatActivity implements Client, 
     @Override
     public void onRefresh() {
         getContentResolver().delete(PhotoEntry.URI, null, null);
-        page = 1;
         loading = true;
-        producer.executeService(BindingExecuteService.startService(PhotosGalleryActivity.this, page));
+        producer.executeService(1);
     }
 
     @Override
@@ -138,28 +137,26 @@ public class PhotosGalleryActivity extends AppCompatActivity implements Client, 
         startActivity(intent);
     }
 
-    @Override
-    public void onRequestStatusChanged(final int status) {
-        switch (status) {
-            case BindingExecuteService.STATUS_RUNNING:
-                loading = true;
-                swipeRefreshLayout.setRefreshing(true);
-                break;
-            case BindingExecuteService.STATUS_SUCCESSFUL:
-                infoView.setVisibility(View.GONE);
-                adapter.notifyDataSetChanged();
-                swipeRefreshLayout.setRefreshing(false);
-                loading = false;
-                break;
-            case BindingExecuteService.STATUS_FAILED:
-                loading = false;
-                swipeRefreshLayout.setRefreshing(false);
-                Toast.makeText(PhotosGalleryActivity.this, "Some Error was happened! ", Toast.LENGTH_LONG).show();
-                break;
-            default:
 
-                break;
-        }
+    @Override
+    public void onRequestStatusRunning() {
+        loading = true;
+        swipeRefreshLayout.setRefreshing(true);
+    }
+
+    @Override
+    public void onRequestStatusSuccess() {
+        infoView.setVisibility(View.GONE);
+        adapter.notifyDataSetChanged();
+        swipeRefreshLayout.setRefreshing(false);
+        loading = false;
+    }
+
+    @Override
+    public void onRequestStatusFail() {
+        loading = false;
+        swipeRefreshLayout.setRefreshing(false);
+        Toast.makeText(PhotosGalleryActivity.this, "Some Error was happened! ", Toast.LENGTH_LONG).show();
     }
 
     private class ActiveConnection implements ServiceConnection {
@@ -171,7 +168,7 @@ public class PhotosGalleryActivity extends AppCompatActivity implements Client, 
             producer.registerHandler(new Handler());
             producer.addClient(PhotosGalleryActivity.this);
             page = page + 1;
-            producer.executeService(BindingExecuteService.startService(PhotosGalleryActivity.this, page));
+            producer.executeService(page);
         }
 
         @Override
