@@ -38,10 +38,8 @@ public class PhotosGalleryActivity extends AppCompatActivity implements Client, 
     private static final int SPAN_COUNT = 3;
     private final ServiceConnection connection = new ActiveConnection();
     private TextView infoView;
-    private int page;
     private PhotoAdapter adapter;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private boolean loading;
     private Producer producer;
 
 
@@ -66,13 +64,10 @@ public class PhotosGalleryActivity extends AppCompatActivity implements Client, 
             @Override
             public void onScrolled(RecyclerView recycler, int dx, int dy) {
                 super.onScrolled(recycler, dx, dy);
-
                 int totalItemCount = recycler.getLayoutManager().getItemCount();
                 int lastItemPosition = ((GridLayoutManager) recycler.getLayoutManager()).findLastVisibleItemPosition();
-                if (!loading && (lastItemPosition >= totalItemCount - DOWNLOAD_LIMIT / 2)) {
-                    loading = true;
-                    page = page + 1;
-                    producer.executeService(page);
+                if (!producer.isLoading() && (lastItemPosition >= totalItemCount - DOWNLOAD_LIMIT / 2)) {
+                    producer.executeService();
                 }
             }
         });
@@ -125,8 +120,7 @@ public class PhotosGalleryActivity extends AppCompatActivity implements Client, 
     @Override
     public void onRefresh() {
         getContentResolver().delete(PhotoEntry.URI, null, null);
-        loading = true;
-        producer.executeService(1);
+        producer.refreshData();
     }
 
     @Override
@@ -140,7 +134,6 @@ public class PhotosGalleryActivity extends AppCompatActivity implements Client, 
 
     @Override
     public void onRequestStatusRunning() {
-        loading = true;
         swipeRefreshLayout.setRefreshing(true);
     }
 
@@ -149,12 +142,10 @@ public class PhotosGalleryActivity extends AppCompatActivity implements Client, 
         infoView.setVisibility(View.GONE);
         adapter.notifyDataSetChanged();
         swipeRefreshLayout.setRefreshing(false);
-        loading = false;
     }
 
     @Override
     public void onRequestStatusFail() {
-        loading = false;
         swipeRefreshLayout.setRefreshing(false);
         Toast.makeText(PhotosGalleryActivity.this, "Some Error was happened! ", Toast.LENGTH_LONG).show();
     }
@@ -167,8 +158,7 @@ public class PhotosGalleryActivity extends AppCompatActivity implements Client, 
             producer = (Producer) service;
             producer.registerHandler(new Handler());
             producer.addClient(PhotosGalleryActivity.this);
-            page = page + 1;
-            producer.executeService(page);
+            producer.executeService();
         }
 
         @Override

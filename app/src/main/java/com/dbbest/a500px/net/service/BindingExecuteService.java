@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.annotation.WorkerThread;
 
 import com.dbbest.a500px.BuildConfig;
 import com.dbbest.a500px.data.PhotoEntry;
@@ -26,12 +27,11 @@ public class BindingExecuteService extends Service {
 
     private final ServiceProducer producer = new ServiceProducer();
     private final ServiceClient serviceClient = new ServiceClient();
-
+    private boolean isLoading;
     private HandlerThread workThread;
     private Handler localHandler;
     private Handler uiHandler;
-
-
+    private int page;
 
     @Nullable
     @Override
@@ -53,41 +53,39 @@ public class BindingExecuteService extends Service {
         workThread.quit();
     }
 
-    public void doWork(final int page) {
+    @WorkerThread
+    private void doWork() {
 
-        localHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                serviceClient.onRequestStatusRunning();
-                RestClient restClient = RestClient.getInstance();
-                ListPhotos results = restClient.getPhotos(BuildConfig.CONSUMER_KEY, page,
-                        DOWNLOAD_LIMIT, IMAGE_SIZE);
-                List<ContentValues> photosToSave = new ArrayList<>();
+        serviceClient.onRequestStatusRunning();
+        RestClient restClient = RestClient.getInstance();
+        ListPhotos results = restClient.getPhotos(BuildConfig.CONSUMER_KEY, page,
+                DOWNLOAD_LIMIT, IMAGE_SIZE);
+        List<ContentValues> photosToSave = new ArrayList<>();
 
-                if (results == null) {
-                    serviceClient.onRequestStatusFail();
+        if (results == null) {
+            serviceClient.onRequestStatusFail();
 
-                } else {
-                    for (Photo photo : results.getPhotos()) {
-                        PhotoModel photoModel = new PhotoModel(photo);
-                        photosToSave.add(photoModel.values());
-                    }
-                    if (photosToSave.isEmpty()) {
-                        serviceClient.onRequestStatusFail();
-                    } else {
-                        ContentValues[] cvArray = new ContentValues[photosToSave.size()];
-                        photosToSave.toArray(cvArray);
-                        getContentResolver().bulkInsert(PhotoEntry.URI, cvArray);
-                        serviceClient.onRequestStatusSuccess();
-                    }
-                }
+        } else {
+            for (Photo photo : results.getPhotos()) {
+                PhotoModel photoModel = new PhotoModel(photo);
+                photosToSave.add(photoModel.values());
             }
-        });
+            if (photosToSave.isEmpty()) {
+                serviceClient.onRequestStatusFail();
+            } else {
+                ContentValues[] cvArray = new ContentValues[photosToSave.size()];
+                photosToSave.toArray(cvArray);
+                getContentResolver().bulkInsert(PhotoEntry.URI, cvArray);
+                serviceClient.onRequestStatusSuccess();
+            }
+        }
 
     }
 
 
     private class ServiceProducer extends Binder implements Producer {
+
+
         @Override
         public void removeClient(Client clientService) {
             serviceClient.client = null;
@@ -98,12 +96,35 @@ public class BindingExecuteService extends Service {
             serviceClient.client = clientService;
         }
 
-        public void executeService(int page) {
-            doWork(page);
+        public void executeService() {
+            localHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    page = page + 1;
+                    doWork();
+                }
+            });
+
+        }
+
+        @Override
+        public void refreshData() {
+            localHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    page = 1;
+                    doWork();
+                }
+            });
         }
 
         public void registerHandler(Handler handler) {
             uiHandler = handler;
+        }
+
+        @Override
+        public boolean isLoading() {
+            return isLoading;
         }
     }
 
@@ -113,6 +134,7 @@ public class BindingExecuteService extends Service {
 
         @Override
         public void onRequestStatusRunning() {
+            isLoading = true;
             uiHandler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -123,6 +145,7 @@ public class BindingExecuteService extends Service {
 
         @Override
         public void onRequestStatusSuccess() {
+            isLoading = false;
             uiHandler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -133,6 +156,7 @@ public class BindingExecuteService extends Service {
 
         @Override
         public void onRequestStatusFail() {
+            isLoading = false;
             uiHandler.post(new Runnable() {
                 @Override
                 public void run() {
