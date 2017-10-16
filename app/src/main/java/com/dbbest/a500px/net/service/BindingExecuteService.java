@@ -21,7 +21,7 @@ import java.util.List;
 
 public class BindingExecuteService extends Service {
 
-    public static final int DOWNLOAD_LIMIT = 50;
+    private static final int DOWNLOAD_LIMIT = 50;
     private static final String IMAGE_SIZE = "2,3";
 
     private final ServiceProducer producer = new ServiceProducer();
