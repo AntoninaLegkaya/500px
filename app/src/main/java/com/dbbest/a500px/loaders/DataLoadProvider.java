@@ -1,38 +1,39 @@
-package com.dbbest.a500px.imageProvider;
+package com.dbbest.a500px.loaders;
 
+import android.support.annotation.DrawableRes;
 import android.support.annotation.StringRes;
 import android.view.View;
 
-public final class Loader {
+public final class DataLoadProvider {
 
-    private String url;
-    private
-    @StringRes
+    private final String url;
+    private final
+    @DrawableRes
     int placeholder;
-    private View view;
+    private final View view;
 
-    public Loader(Builder builder) {
+     DataLoadProvider(Builder builder) {
         this.url = builder.url;
         this.placeholder = builder.placeholder;
         this.view = builder.view;
     }
 
-    public String getUrl() {
+    String getUrl() {
         return url;
     }
 
-    public int getPlaceholder() {
+    int getPlaceholder() {
         return placeholder;
     }
 
-    public View getView() {
+    View getView() {
         return view;
     }
 
 
     public static class Builder {
 
-        private String url;
+        private final String url;
         private
         @StringRes
         int placeholder;
@@ -42,7 +43,7 @@ public final class Loader {
             this.url = urlImage;
         }
 
-        public Builder addPlaceholder(@StringRes int holder) {
+        public Builder addPlaceholder(@DrawableRes  int holder) {
             this.placeholder = holder;
             return this;
         }
@@ -52,8 +53,8 @@ public final class Loader {
             return this;
         }
 
-        public Loader build() {
-            return new Loader(this);
+        public DataLoadProvider build() {
+            return new DataLoadProvider(this);
         }
 
     }

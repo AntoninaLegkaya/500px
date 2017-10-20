@@ -8,8 +8,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dbbest.a500px.R;
-import com.dbbest.a500px.imageProvider.Loader;
-import com.dbbest.a500px.imageProvider.ProviderManager;
+import com.dbbest.a500px.loaders.DataLoadProvider;
+import com.dbbest.a500px.loaders.ProviderManager;
 
 public class PhotoActivity extends AppCompatActivity {
 
@@ -29,11 +29,11 @@ public class PhotoActivity extends AppCompatActivity {
             if (name != null) {
                 nameView.setText(name);
                 ProviderManager manager = new ProviderManager();
-                Loader loader = new Loader.Builder(url)
+                DataLoadProvider dataLoadProvider = new DataLoadProvider.Builder(url)
                         .addPlaceholder(R.drawable.ic_empty)
                         .addView(photoView)
                         .build();
-                manager.makePicassoProvider(loader).loadImage();
+                manager.makePicassoProvider(dataLoadProvider).loadImage();
             }
         }
     }

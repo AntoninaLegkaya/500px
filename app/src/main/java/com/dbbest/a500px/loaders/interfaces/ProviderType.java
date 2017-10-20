@@ -1,4 +1,4 @@
-package com.dbbest.a500px.imageProvider.interfaces.interfaces;
+package com.dbbest.a500px.loaders.interfaces;
 
 public enum ProviderType {
 

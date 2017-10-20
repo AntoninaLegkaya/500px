@@ -10,8 +10,8 @@ import android.widget.ImageView;
 
 import com.dbbest.a500px.R;
 import com.dbbest.a500px.data.PhotoEntry;
-import com.dbbest.a500px.imageProvider.Loader;
-import com.dbbest.a500px.imageProvider.ProviderManager;
+import com.dbbest.a500px.loaders.DataLoadProvider;
+import com.dbbest.a500px.loaders.ProviderManager;
 import com.dbbest.a500px.model.PhotoModel;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -125,12 +125,12 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         }
 
         void bind(final PhotoModel photo) {
-            Loader loader = new Loader.Builder(photo.getPreviewUrl())
+            DataLoadProvider dataLoadProvider = new DataLoadProvider.Builder(photo.getPreviewUrl())
                     .addPlaceholder(R.drawable.ic_empty)
                     .addView(previewView)
                     .build();
             ProviderManager manager = new ProviderManager();
-            manager.makeGlideProvider(loader).loadImage();
+            manager.makeGlideProvider(dataLoadProvider).loadImage();
 
         }
     }
