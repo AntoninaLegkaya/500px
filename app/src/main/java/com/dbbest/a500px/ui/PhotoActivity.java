@@ -7,8 +7,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.dbbest.a500px.R;
+import com.dbbest.a500px.imageProvider.Loader;
+import com.dbbest.a500px.imageProvider.ProviderManager;
 
 public class PhotoActivity extends AppCompatActivity {
 
@@ -27,11 +28,12 @@ public class PhotoActivity extends AppCompatActivity {
             String url = intent.getStringExtra(PHOTO_URL);
             if (name != null) {
                 nameView.setText(name);
-                Glide.with(photoView.getContext())
-                        .load(url)
-                        .placeholder(R.drawable.ic_empty)
-                        .centerCrop()
-                        .into(photoView);
+                ProviderManager manager = new ProviderManager();
+                Loader loader = new Loader.Builder(url)
+                        .addPlaceholder(R.drawable.ic_empty)
+                        .addView(photoView)
+                        .build();
+                manager.makePicassoProvider(loader).loadImage();
             }
         }
     }
