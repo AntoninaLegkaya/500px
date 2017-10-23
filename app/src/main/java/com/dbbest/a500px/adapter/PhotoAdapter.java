@@ -1,5 +1,7 @@
 package com.dbbest.a500px.adapter;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.support.v7.widget.RecyclerView;
@@ -10,14 +12,18 @@ import android.widget.ImageView;
 
 import com.dbbest.a500px.R;
 import com.dbbest.a500px.data.PhotoEntry;
-import com.dbbest.a500px.loaders.DataLoadProvider;
+import com.dbbest.a500px.loaders.ProviderBuilder;
 import com.dbbest.a500px.loaders.ProviderManager;
+import com.dbbest.a500px.loaders.interfaces.ProviderType;
 import com.dbbest.a500px.model.PhotoModel;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHolder> {
 
+
+    private static final String SETTINGS = "settings";
+    private static final String IS_GLIDE = "checkedGlide";
     private final PreviewCallback previewCallback;
     private Cursor cursor;
     private boolean dataValid;
@@ -125,12 +131,19 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         }
 
         void bind(final PhotoModel photo) {
-            DataLoadProvider dataLoadProvider = new DataLoadProvider.Builder(photo.getPreviewUrl())
+            ProviderBuilder providerBuilder = new ProviderBuilder.Builder(photo.getPreviewUrl())
                     .addPlaceholder(R.drawable.ic_empty)
                     .addView(previewView)
                     .build();
             ProviderManager manager = new ProviderManager();
-            manager.makeGlideProvider(dataLoadProvider).loadImage();
+            SharedPreferences preferences = previewView.getContext().getSharedPreferences(SETTINGS, Context.MODE_PRIVATE);
+            boolean isGlideChecked = preferences.getBoolean(IS_GLIDE, false);
+            if (isGlideChecked) {
+                manager.makeProvider(providerBuilder, ProviderType.GLIDE).loadImage();
+            } else {
+                manager.makeProvider(providerBuilder, ProviderType.PICASSO).loadImage();
+            }
+
 
         }
     }

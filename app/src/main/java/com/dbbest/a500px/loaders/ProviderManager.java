@@ -1,16 +1,18 @@
 package com.dbbest.a500px.loaders;
 
 import com.dbbest.a500px.loaders.interfaces.Provider;
+import com.dbbest.a500px.loaders.interfaces.ProviderType;
 
 public class ProviderManager implements CreatorManager {
 
     @Override
-    public Provider makeGlideProvider(DataLoadProvider dataLoadProvider) {
-        return new GlideLoader(dataLoadProvider);
+    public Provider makeProvider(ProviderBuilder data, ProviderType type) {
+
+        if (type == ProviderType.GLIDE) {
+            return new GlideLoader(data);
+        } else {
+            return new PicassoLoader(data);
+        }
     }
 
-    @Override
-    public Provider makePicassoProvider(DataLoadProvider dataLoadProvider) {
-        return new PicassoLoader(dataLoadProvider);
-    }
 }

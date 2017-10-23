@@ -6,22 +6,19 @@ import com.dbbest.a500px.loaders.interfaces.Provider;
 import com.dbbest.a500px.loaders.interfaces.ProviderType;
 import com.squareup.picasso.Picasso;
 
-import timber.log.Timber;
-
 public class PicassoLoader implements Provider {
-    private final DataLoadProvider dataLoadProvider;
+    private final ProviderBuilder providerBuilder;
 
-    PicassoLoader(DataLoadProvider dataLoadProvider) {
-        this.dataLoadProvider = dataLoadProvider;
+    PicassoLoader(ProviderBuilder data) {
+        this.providerBuilder = data;
     }
 
     @Override
     public void loadImage() {
-        Timber.i("Load from Picasso");
-        Picasso.with(dataLoadProvider.getView().getContext())
-                .load(dataLoadProvider.getUrl())
-                .placeholder(dataLoadProvider.getPlaceholder())
-                .into((ImageView) dataLoadProvider.getView());
+        Picasso.with(providerBuilder.getView().getContext())
+                .load(providerBuilder.getUrl())
+                .placeholder(providerBuilder.getPlaceholder())
+                .into((ImageView) providerBuilder.getView());
     }
 
     @Override

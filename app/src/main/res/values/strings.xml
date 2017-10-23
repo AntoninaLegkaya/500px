@@ -2,4 +2,7 @@
     <string name="app_name">500px</string>
     <string name="gallery_info_string">Here was You gallery!</string>
     <string name="error_swap_cursor">Nothing come in</string>
+    <string name="action_glide">Glide</string>
+    <string name="action_picasso">Picasso</string>
+    <string name="action_settings">Settings</string>
 </resources>

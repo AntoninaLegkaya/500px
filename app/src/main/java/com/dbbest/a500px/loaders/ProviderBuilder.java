@@ -4,7 +4,7 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.StringRes;
 import android.view.View;
 
-public final class DataLoadProvider {
+public final class ProviderBuilder {
 
     private final String url;
     private final
@@ -12,7 +12,7 @@ public final class DataLoadProvider {
     int placeholder;
     private final View view;
 
-     DataLoadProvider(Builder builder) {
+     ProviderBuilder(Builder builder) {
         this.url = builder.url;
         this.placeholder = builder.placeholder;
         this.view = builder.view;
@@ -53,8 +53,8 @@ public final class DataLoadProvider {
             return this;
         }
 
-        public DataLoadProvider build() {
-            return new DataLoadProvider(this);
+        public ProviderBuilder build() {
+            return new ProviderBuilder(this);
         }
 
     }

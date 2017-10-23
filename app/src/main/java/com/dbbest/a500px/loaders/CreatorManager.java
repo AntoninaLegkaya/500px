@@ -1,10 +1,10 @@
 package com.dbbest.a500px.loaders;
 
 import com.dbbest.a500px.loaders.interfaces.Provider;
+import com.dbbest.a500px.loaders.interfaces.ProviderType;
 
 public interface CreatorManager {
 
-    Provider makeGlideProvider(DataLoadProvider dataLoadProvider);
+    Provider makeProvider(ProviderBuilder providerBuilder, ProviderType type);
 
-    Provider makePicassoProvider(DataLoadProvider dataLoadProvider);
 }

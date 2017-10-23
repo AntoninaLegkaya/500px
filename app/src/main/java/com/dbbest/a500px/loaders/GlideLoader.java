@@ -6,23 +6,20 @@ import com.bumptech.glide.Glide;
 import com.dbbest.a500px.loaders.interfaces.Provider;
 import com.dbbest.a500px.loaders.interfaces.ProviderType;
 
-import timber.log.Timber;
-
 public class GlideLoader implements Provider {
-    private final DataLoadProvider dataLoadProvider;
+    private final ProviderBuilder providerBuilder;
 
-    GlideLoader(DataLoadProvider dataLoadProvider) {
-        this.dataLoadProvider = dataLoadProvider;
+    GlideLoader(ProviderBuilder data) {
+        this.providerBuilder = data;
     }
 
     @Override
     public void loadImage() {
-        Timber.i("Load from Glide");
-        Glide.with(dataLoadProvider.getView().getContext())
-                .load(dataLoadProvider.getUrl())
-                .placeholder(dataLoadProvider.getPlaceholder())
+        Glide.with(providerBuilder.getView().getContext())
+                .load(providerBuilder.getUrl())
+                .placeholder(providerBuilder.getPlaceholder())
                 .centerCrop()
-                .into((ImageView) dataLoadProvider.getView());
+                .into((ImageView) providerBuilder.getView());
     }
 
     @Override
