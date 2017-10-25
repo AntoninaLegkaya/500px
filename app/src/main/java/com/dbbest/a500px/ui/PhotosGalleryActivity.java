@@ -64,6 +64,7 @@ public class PhotosGalleryActivity extends AppCompatActivity implements Client, 
 
         preferences = getSharedPreferences(SETTINGS, Context.MODE_PRIVATE);
 
+
         getContentResolver().delete(PhotoEntry.URI, null, null);
 
 
@@ -127,6 +128,7 @@ public class PhotosGalleryActivity extends AppCompatActivity implements Client, 
                 return super.onOptionsItemSelected(item);
         }
         editor.apply();
+
         onRefresh();
         return true;
 

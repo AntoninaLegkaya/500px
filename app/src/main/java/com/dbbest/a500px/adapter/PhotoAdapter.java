@@ -1,5 +1,6 @@
 package com.dbbest.a500px.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -12,9 +13,7 @@ import android.widget.ImageView;
 
 import com.dbbest.a500px.R;
 import com.dbbest.a500px.data.PhotoEntry;
-import com.dbbest.a500px.loaders.ProviderBuilder;
-import com.dbbest.a500px.loaders.ProviderManager;
-import com.dbbest.a500px.loaders.interfaces.ProviderType;
+import com.dbbest.a500px.loader.LoaderManager;
 import com.dbbest.a500px.model.PhotoModel;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -24,10 +23,11 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
 
     private static final String SETTINGS = "settings";
     private static final String IS_GLIDE = "checkedGlide";
+    private  boolean isGlide;
     private final PreviewCallback previewCallback;
+    private final SharedPreferences preferences;
     private Cursor cursor;
     private boolean dataValid;
-
     private final DataSetObserver dataSetObserver = new DataSetObserver() {
         @Override
         public void onChanged() {
@@ -45,6 +45,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
 
     public PhotoAdapter(PreviewCallback callback) {
         this.previewCallback = callback;
+        preferences = ((Activity) callback).getSharedPreferences(SETTINGS, Context.MODE_PRIVATE);
     }
 
     @Override
@@ -65,7 +66,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
                 throw new IllegalStateException("couldn't move cursor to position " + position);
             }
             final PhotoModel photo = new PhotoModel(cursor);
-            holder.bind(photo);
+            holder.bind(photo, isGlide);
             holder.previewView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -108,6 +109,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
             notifyDataSetChanged();
 
         } else {
+            isGlide = preferences.getBoolean(IS_GLIDE, false);
             newCursor.registerDataSetObserver(dataSetObserver);
             rowIDColumn = newCursor.getColumnIndexOrThrow(PhotoEntry._ID);
             dataValid = true;
@@ -130,20 +132,8 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
             previewView = (ImageView) view.findViewById(R.id.image_photo);
         }
 
-        void bind(final PhotoModel photo) {
-            ProviderBuilder providerBuilder = new ProviderBuilder.Builder(photo.getPreviewUrl())
-                    .addPlaceholder(R.drawable.ic_empty)
-                    .addView(previewView)
-                    .build();
-            ProviderManager manager = new ProviderManager();
-            SharedPreferences preferences = previewView.getContext().getSharedPreferences(SETTINGS, Context.MODE_PRIVATE);
-            boolean isGlideChecked = preferences.getBoolean(IS_GLIDE, false);
-            if (isGlideChecked) {
-                manager.makeProvider(providerBuilder, ProviderType.GLIDE).loadImage();
-            } else {
-                manager.makeProvider(providerBuilder, ProviderType.PICASSO).loadImage();
-            }
-
+        void bind(final PhotoModel photo, final boolean isGlide) {
+            LoaderManager.makeLoader(isGlide, previewView, R.drawable.ic_empty, photo.getPreviewUrl()).loadImage();
 
         }
     }

@@ -14,9 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dbbest.a500px.R;
-import com.dbbest.a500px.loaders.ProviderBuilder;
-import com.dbbest.a500px.loaders.ProviderManager;
-import com.dbbest.a500px.loaders.interfaces.ProviderType;
+import com.dbbest.a500px.loader.LoaderManager;
 
 public class PhotoActivity extends AppCompatActivity {
 
@@ -55,17 +53,8 @@ public class PhotoActivity extends AppCompatActivity {
     }
 
     private void fillPhoto() {
-        ProviderManager manager = new ProviderManager();
-        ProviderBuilder providerBuilder = new ProviderBuilder.Builder(url)
-                .addPlaceholder(R.drawable.ic_empty)
-                .addView(photoView)
-                .build();
-        boolean isGlideChecked = preferences.getBoolean(IS_GLIDE, false);
-        if (isGlideChecked) {
-            manager.makeProvider(providerBuilder, ProviderType.GLIDE).loadImage();
-        } else {
-            manager.makeProvider(providerBuilder, ProviderType.PICASSO).loadImage();
-        }
+        boolean isGlide = preferences.getBoolean(IS_GLIDE, false);
+        LoaderManager.makeLoader(isGlide, photoView, R.drawable.ic_empty, url).loadImage();
     }
 
 
