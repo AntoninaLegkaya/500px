@@ -16,14 +16,14 @@ public final class LoaderManager {
             ((GlideBuilder) builder).view(view)
                     .urlLoad(url)
                     .placeholder(holder);
-            return new LoaderImp(builder);
         } else {
             builder = new PicassoBuilder();
             ((PicassoBuilder) builder).view(view)
                     .urlLoad(url)
                     .placeholder(holder);
-            return new LoaderImp(builder);
+
         }
+        return new LoaderImp(builder);
     }
 
 }
