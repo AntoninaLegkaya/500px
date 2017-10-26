@@ -13,7 +13,7 @@ import android.widget.ImageView;
 
 import com.dbbest.a500px.R;
 import com.dbbest.a500px.data.PhotoEntry;
-import com.dbbest.a500px.loader.LoaderManager;
+import com.dbbest.a500px.loader.PictureLoaderManager;
 import com.dbbest.a500px.model.PhotoModel;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -23,7 +23,6 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
 
     private static final String SETTINGS = "settings";
     private static final String IS_GLIDE = "checkedGlide";
-    private  boolean isGlide;
     private final PreviewCallback previewCallback;
     private final SharedPreferences preferences;
     private Cursor cursor;
@@ -66,7 +65,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
                 throw new IllegalStateException("couldn't move cursor to position " + position);
             }
             final PhotoModel photo = new PhotoModel(cursor);
-            holder.bind(photo, isGlide);
+            holder.bind(photo);
             holder.previewView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -109,7 +108,8 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
             notifyDataSetChanged();
 
         } else {
-            isGlide = preferences.getBoolean(IS_GLIDE, false);
+            boolean isGlide = preferences.getBoolean(IS_GLIDE, false);
+            PictureLoaderManager.getInstance((Activity) previewCallback).setGlide(isGlide);
             newCursor.registerDataSetObserver(dataSetObserver);
             rowIDColumn = newCursor.getColumnIndexOrThrow(PhotoEntry._ID);
             dataValid = true;
@@ -132,9 +132,9 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
             previewView = (ImageView) view.findViewById(R.id.image_photo);
         }
 
-        void bind(final PhotoModel photo, final boolean isGlide) {
-            LoaderManager.makeLoader(isGlide, previewView, R.drawable.ic_empty, photo.getPreviewUrl()).loadImage();
-
+        void bind(final PhotoModel photo) {
+            PictureLoaderManager.getInstance(previewView.getContext())
+                    .createPictureLoader(previewView, R.drawable.ic_empty, photo.getPreviewUrl()).build();
         }
     }
 }

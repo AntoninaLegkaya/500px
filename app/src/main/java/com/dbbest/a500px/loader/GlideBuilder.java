@@ -6,49 +6,50 @@ import android.widget.ImageView;
 import com.bumptech.glide.DrawableRequestBuilder;
 import com.bumptech.glide.Glide;
 
-class GlideBuilder extends LoaderBuilder {
-    private DrawableRequestBuilder drBuilder;
-    private View view;
+class GlideBuilder extends PictureLoaderBuilder {
 
-    private GlideBuilder requestBuilder() {
-        if (view != null) {
-            drBuilder = Glide.with(view.getContext()).load(getUrl());
+    private DrawableRequestBuilder drawBuilder;
+    private final  View imageView;
+
+    GlideBuilder(String url, int holder, View view) {
+        super(url, holder);
+        this.imageView = view;
+    }
+
+    @Override
+    public PictureLoaderBuilder build() {
+        return urlLoad()
+                .placeholder()
+                .applyCropCenter()
+                .into();
+    }
+
+    private GlideBuilder urlLoad() {
+        if (imageView != null) {
+            drawBuilder = Glide.with(imageView.getContext()).load(getUrl());
         }
         return this;
     }
 
-    private GlideBuilder holder() {
-        if (drBuilder != null) {
-            drBuilder.placeholder(getHolder());
-        }
-        return this;
-    }
-
-    private GlideBuilder into() {
-        if (drBuilder != null) {
-            drBuilder.into((ImageView) view);
+    private GlideBuilder placeholder() {
+        if (drawBuilder != null) {
+            drawBuilder.placeholder(getHolder());
         }
         return this;
     }
 
     private GlideBuilder applyCropCenter() {
-        if (drBuilder != null) {
-            drBuilder.centerCrop();
+        if (drawBuilder != null) {
+            drawBuilder.centerCrop();
         }
         return this;
     }
 
-    GlideBuilder view(View imageView) {
-        this.view = imageView;
+    private GlideBuilder into() {
+        if (drawBuilder != null) {
+            drawBuilder.into((ImageView) imageView);
+        }
         return this;
     }
 
-
-    @Override
-    public LoaderBuilder build() {
-        return requestBuilder()
-                .holder()
-                .applyCropCenter()
-                .into();
-    }
 }

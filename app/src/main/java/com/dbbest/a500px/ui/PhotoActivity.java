@@ -14,7 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dbbest.a500px.R;
-import com.dbbest.a500px.loader.LoaderManager;
+import com.dbbest.a500px.loader.PictureLoaderManager;
 
 public class PhotoActivity extends AppCompatActivity {
 
@@ -53,8 +53,8 @@ public class PhotoActivity extends AppCompatActivity {
     }
 
     private void fillPhoto() {
-        boolean isGlide = preferences.getBoolean(IS_GLIDE, false);
-        LoaderManager.makeLoader(isGlide, photoView, R.drawable.ic_empty, url).loadImage();
+        PictureLoaderManager.getInstance(photoView.getContext())
+                .createPictureLoader(photoView, R.drawable.ic_empty, url).build();
     }
 
 
@@ -66,6 +66,7 @@ public class PhotoActivity extends AppCompatActivity {
                 if (!item.isChecked()) {
                     item.setChecked(true);
                     editor.putBoolean(IS_GLIDE, true);
+                    PictureLoaderManager.getInstance(photoView.getContext()).setGlide(true);
                 }
                 break;
             }
@@ -73,6 +74,7 @@ public class PhotoActivity extends AppCompatActivity {
                 if (!item.isChecked()) {
                     item.setChecked(true);
                     editor.putBoolean(IS_GLIDE, false);
+                    PictureLoaderManager.getInstance(photoView.getContext()).setGlide(false);
                 }
                 break;
             }

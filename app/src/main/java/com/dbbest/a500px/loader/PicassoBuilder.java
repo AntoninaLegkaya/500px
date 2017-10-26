@@ -6,14 +6,27 @@ import android.widget.ImageView;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 
-class PicassoBuilder extends LoaderBuilder {
+class PicassoBuilder extends PictureLoaderBuilder {
 
     private RequestCreator creator;
-    private View view;
+    private final View imageView;
+
+    PicassoBuilder(String url, int holder, View view) {
+        super(url, holder);
+        this.imageView = view;
+    }
+
+    @Override
+    public PictureLoaderBuilder build() {
+        return requestBuilder()
+                .holder()
+                .applyCropCenter()
+                .into();
+    }
 
     private PicassoBuilder requestBuilder() {
-        if (view != null) {
-            creator = Picasso.with(view.getContext()).load(getUrl());
+        if (imageView != null) {
+            creator = Picasso.with(imageView.getContext()).load(getUrl());
         }
         return this;
     }
@@ -25,25 +38,19 @@ class PicassoBuilder extends LoaderBuilder {
         return this;
     }
 
-    private PicassoBuilder into() {
+    private PicassoBuilder applyCropCenter() {
         if (creator != null) {
-            creator.into((ImageView) view);
+            creator.fit().centerCrop();
         }
         return this;
     }
 
 
-    PicassoBuilder view(View imageView) {
-        this.view = imageView;
+    private PicassoBuilder into() {
+        if (creator != null) {
+            creator.into((ImageView) imageView);
+        }
         return this;
-    }
-
-
-    @Override
-    public LoaderBuilder build() {
-        return requestBuilder()
-                .holder()
-                .into();
     }
 
 }
