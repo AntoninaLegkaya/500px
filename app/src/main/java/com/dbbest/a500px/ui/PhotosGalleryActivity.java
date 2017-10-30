@@ -44,12 +44,11 @@ public class PhotosGalleryActivity extends AppCompatActivity implements Client, 
     private static final String SETTINGS = "settings";
     private static final String IS_GLIDE = "checkedGlide";
     private final ServiceConnection connection = new ActiveConnection();
+    Producer producer;
     private SharedPreferences preferences;
     private TextView infoView;
     private PhotoAdapter adapter;
     private SwipeRefreshLayout swipeRefreshLayout;
-     Producer producer;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -68,10 +67,10 @@ public class PhotosGalleryActivity extends AppCompatActivity implements Client, 
         getContentResolver().delete(PhotoEntry.URI, null, null);
 
 
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(this);
-        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler);
-        infoView = (TextView) findViewById(R.id.text_info);
+        final RecyclerView recyclerView = findViewById(R.id.recycler);
+        infoView = findViewById(R.id.text_info);
         final GridLayoutManager layoutManager = new GridLayoutManager(this, SPAN_COUNT);
         recyclerView.setLayoutManager(layoutManager);
 

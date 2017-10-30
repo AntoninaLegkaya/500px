@@ -9,7 +9,7 @@ public class PictureLoaderBuilder implements IPictureLoaderBuilder {
     @DrawableRes
     int holder;
 
-    public PictureLoaderBuilder(String url, int holder) {
+    PictureLoaderBuilder(String url, int holder) {
         this.url = url;
         this.holder = holder;
     }

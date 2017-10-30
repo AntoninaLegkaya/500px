@@ -32,7 +32,7 @@ public class PhotoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo);
 
-        Toolbar bar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar bar = findViewById(R.id.toolbar);
         setSupportActionBar(bar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle("");
@@ -40,8 +40,8 @@ public class PhotoActivity extends AppCompatActivity {
 
         preferences = getSharedPreferences(SETTINGS, Context.MODE_PRIVATE);
 
-        photoView = (ImageView) findViewById(R.id.image_photo);
-        TextView nameView = (TextView) findViewById(R.id.text_name);
+        photoView = findViewById(R.id.image_photo);
+        TextView nameView = findViewById(R.id.text_name);
         if (intent != null) {
             String name = intent.getStringExtra(PHOTOGRAPH_NAME);
             url = intent.getStringExtra(PHOTO_URL);

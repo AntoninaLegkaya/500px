@@ -131,7 +131,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         @SuppressFBWarnings(value = "URF_UNREAD_FIELD")
         PhotoViewHolder(View view) {
             super(view);
-            previewView = (ImageView) view.findViewById(R.id.image_photo);
+            previewView = view.findViewById(R.id.image_photo);
         }
 
         void bind(final PhotoModel photo) {
