@@ -18,6 +18,7 @@ import com.dbbest.a500px.model.PhotoModel;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+@SuppressWarnings("PMD.AccessorMethodGeneration")
 public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHolder> {
 
 
@@ -25,8 +26,8 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
     private static final String IS_GLIDE = "checkedGlide";
     private final PreviewCallback previewCallback;
     private final SharedPreferences preferences;
-    private Cursor cursor;
-    private boolean dataValid;
+    //PMD check
+    boolean dataValid;
     private final DataSetObserver dataSetObserver = new DataSetObserver() {
         @Override
         public void onChanged() {
@@ -40,6 +41,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
             notifyDataSetChanged();
         }
     };
+    private Cursor cursor;
     private int rowIDColumn;
 
     public PhotoAdapter(PreviewCallback callback) {

@@ -10,7 +10,6 @@ def lib = rootProject.ext.lib
 
 android {
 
-
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion "$rootProject.ext.buildToolsVersion"
 
@@ -20,10 +19,12 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode buildVersionNumber
         versionName buildVersionName
-        multiDexEnabled true
         buildConfigField('String', API_SERVER_ENDPOINT, "\"https://api.500px.com/\"")
         buildConfigField('String', CONSUMER_KEY, "\"aSRarMs8venzJ0jiYi4EqpakNZdfkXkyISAXZ5Bi\"")
+        multiDexEnabled true
+
     }
+
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
@@ -41,28 +42,46 @@ android {
 
     android {
         configurations.all {
-            resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.1'
+            resolutionStrategy {
+                force group: 'com.android.support', name: 'support-v4', version: rootProject.ext.supportLibraryVersion
+                force group: 'com.android.support', name: 'appcompat-v7', version: rootProject.ext.supportLibraryVersion
+                force group: 'com.android.support', name: 'support-annotations', version: rootProject.ext.supportLibraryVersion
+            }
         }
     }
+
+
 }
 
 dependencies {
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile "com.android.support:appcompat-v7:$rootProject.ext.supportLibraryVersion"
-    compile "com.android.support:recyclerview-v7:$rootProject.ext.supportLibraryVersion"
-    testCompile 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
 
-    compile "com.squareup.okhttp3:logging-interceptor:$lib.okhttp"
+    implementation("com.android.support:appcompat-v7:$rootProject.ext.supportLibraryVersion") {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
+    implementation "com.android.support:recyclerview-v7:$rootProject.ext.supportLibraryVersion"
 
-    compile "com.jakewharton.timber:timber:$lib.timber"
-    compile "com.google.code.findbugs:annotations:$lib.findbugs"
+    implementation "com.squareup.okhttp3:logging-interceptor:$lib.okhttp"
 
-    compile "com.github.bumptech.glide:glide:$lib.glide"
-    compile "com.squareup.picasso:picasso:$lib.picasso"
+    implementation "com.jakewharton.timber:timber:$lib.timber"
 
-    compile "com.squareup.retrofit2:retrofit:$lib.retrofit"
-    compile "com.squareup.retrofit2:converter-gson:$lib.retrofit"
+    implementation "com.github.bumptech.glide:glide:$lib.glide"
+    implementation "com.squareup.picasso:picasso:$lib.picasso"
+
+    implementation "com.squareup.retrofit2:retrofit:$lib.retrofit"
+    implementation("com.squareup.retrofit2:converter-gson:$lib.retrofit") {
+        exclude module: 'stax'
+        exclude module: 'stax-api'
+        exclude module: 'xpp3'
+    }
+    implementation("com.google.code.findbugs:annotations:$lib.findbugs") {
+        // Need to exclude these, or build is broken by:
+        //   com.android.dex.DexException: Multiple dex files define Ljavax/annotation/CheckForNull
+        exclude module: 'jsr305'
+        exclude module: 'jcip-annotations'
+    }
 
 }

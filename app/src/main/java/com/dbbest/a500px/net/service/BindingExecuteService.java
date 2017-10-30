@@ -25,13 +25,13 @@ public class BindingExecuteService extends Service {
     private static final int DOWNLOAD_LIMIT = 50;
     private static final String IMAGE_SIZE = "2,3";
 
-    private final ServiceProducer producer = new ServiceProducer();
-    private final ServiceClient serviceClient = new ServiceClient();
-    private boolean isLoading;
-    private HandlerThread workThread;
-    private Handler localHandler;
-    private Handler uiHandler;
-    private int page;
+    final ServiceProducer producer = new ServiceProducer();
+    final ServiceClient serviceClient = new ServiceClient();
+    boolean isLoading;
+    HandlerThread workThread;
+    Handler localHandler;
+    Handler uiHandler;
+    int page;
 
     @Nullable
     @Override
@@ -54,7 +54,7 @@ public class BindingExecuteService extends Service {
     }
 
     @WorkerThread
-    private void doWork() {
+     void doWork() {
 
         serviceClient.onRequestStatusRunning();
         RestClient restClient = RestClient.getInstance();
@@ -130,7 +130,7 @@ public class BindingExecuteService extends Service {
 
     private class ServiceClient implements Client {
 
-        private Client client;
+         Client client;
 
         @Override
         public void onRequestStatusRunning() {

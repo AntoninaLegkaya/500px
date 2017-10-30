@@ -15,7 +15,7 @@ task findbugs(type: FindBugs) {
 
         xml.enabled = true
         xml.withMessages = true
-        xml.destination = "$project.rootDir/build_results/findbugs.xml"
+       xml.destination = "$project.rootDir/build_results/findbugs.xml"
     }
 
     afterEvaluate {

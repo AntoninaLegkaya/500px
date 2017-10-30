@@ -48,7 +48,7 @@ public class PhotosGalleryActivity extends AppCompatActivity implements Client, 
     private TextView infoView;
     private PhotoAdapter adapter;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private Producer producer;
+     Producer producer;
 
 
     @Override
