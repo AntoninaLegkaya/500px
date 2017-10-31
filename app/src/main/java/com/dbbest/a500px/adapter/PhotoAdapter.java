@@ -14,7 +14,12 @@ import android.widget.ImageView;
 import com.dbbest.a500px.R;
 import com.dbbest.a500px.data.PhotoEntry;
 import com.dbbest.a500px.loader.PictureLoaderManager;
+import com.dbbest.a500px.loader.custom.PictureCustomManager;
+import com.dbbest.a500px.loader.custom.PictureView;
 import com.dbbest.a500px.model.PhotoModel;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -137,6 +142,14 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         void bind(final PhotoModel photo) {
             PictureLoaderManager.getInstance(previewView.getContext())
                     .createPictureLoader(previewView, R.drawable.ic_empty, photo.getPreviewUrl()).build();
+            URL url = null;
+            try {
+                url = new URL(photo.getPreviewUrl());
+                PictureCustomManager.startDownload(new PictureView(url, previewView), true);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+
         }
     }
 }
