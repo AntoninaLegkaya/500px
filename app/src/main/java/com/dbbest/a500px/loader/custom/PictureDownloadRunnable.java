@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class PictureCustomRunnable implements Runnable {
+public class PictureDownloadRunnable implements Runnable {
 
     static final int HTTP_STATE_FAILED = -1;
     static final int HTTP_STATE_STARTED = 0;
@@ -16,10 +16,10 @@ public class PictureCustomRunnable implements Runnable {
 //            + android.os.Build.VERSION.RELEASE + ";"
 //            + Locale.getDefault().toString() + "; " + android.os.Build.DEVICE
 //            + "/" + android.os.Build.ID + ")";
-    private TaskRunnableDownloadMethods pictureTask;
+    private final TaskRunnableDownloadMethods pictureTask;
 
-    public PictureCustomRunnable(TaskRunnableDownloadMethods pictureTask) {
-        this.pictureTask = pictureTask;
+    public PictureDownloadRunnable(TaskRunnableDownloadMethods task) {
+        this.pictureTask = task;
     }
 
     @Override

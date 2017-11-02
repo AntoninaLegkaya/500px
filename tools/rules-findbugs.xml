@@ -3,7 +3,7 @@
         <Class name="~.*\.R\$.*"/>
     </Match>
     <Match>
-        <Class name="~com\.dbbest\.a500px\.MainActivity"/>
-        <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
+        <Class name="~com\.dbbest\.a500px\.PictureManager"/>
+        <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON"/>
     </Match>
 </FindBugsFilter>

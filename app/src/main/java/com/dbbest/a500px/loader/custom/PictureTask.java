@@ -1,50 +1,30 @@
 package com.dbbest.a500px.loader.custom;
 
+import android.graphics.Bitmap;
+
 import java.lang.ref.WeakReference;
 import java.net.URL;
 
-public class PictureTask implements PictureCustomRunnable.TaskRunnableDownloadMethods {
-    private static PictureCustomManager pictureCustomManager;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings("EI_EXPOSE_REP")
+public class PictureTask implements PictureDownloadRunnable.TaskRunnableDownloadMethods, PictureDecodeRunnable.ReusableRunnableMethods {
+
+    private final Runnable downloadRunnable;
+    //    private final static PictureManager pictureManager=PictureManager.getInstance();
     private byte[] pictureBuffer;
-    private Runnable downloadRunnable;
+    private Runnable decodeRunnable;
     private URL pictureURL;
     private Thread currentThread;
     private WeakReference<PictureView> pictureWeakRef;
     private int targetWidth;
     private int targetHeight;
+    private Bitmap decodedImage;
     private boolean cacheEnabled;
 
-    public PictureTask() {
-        downloadRunnable = new PictureCustomRunnable(this);
-        pictureCustomManager = PictureCustomManager.getInstance();
-    }
-
-    public boolean isCacheEnabled() {
-        return cacheEnabled;
-    }
-
-    public Runnable getDownloadRunnable() {
-        return downloadRunnable;
-    }
-
-    public Thread getCurrentThread() {
-        synchronized (pictureCustomManager) {
-            return currentThread;
-        }
-    }
-
-    private void setCurrentThread(Thread currThread) {
-        this.currentThread = currThread;
-    }
-
-    // Delegates handling the current state of the task to the PictureCustomManager object
-    private void handleState(int state) {
-        pictureCustomManager.handleState(this, state);
-    }
-
-    @Override
-    public void setDownloadThread(Thread currThread) {
-        setCurrentThread(currThread);
+    PictureTask() {
+        downloadRunnable = new PictureDownloadRunnable(this);
+        decodeRunnable = new PictureDecodeRunnable(this);
     }
 
     @Override
@@ -57,39 +37,26 @@ public class PictureTask implements PictureCustomRunnable.TaskRunnableDownloadMe
         pictureBuffer = buffer;
     }
 
-    void initializeDownloaderTask(
-            PictureCustomManager pictureManager,
-            PictureView pictureView,
-            boolean cacheFlag) {
-        pictureCustomManager = pictureManager;
-
-        pictureURL = pictureView.getPictureUrl();
-
-        pictureWeakRef = new WeakReference<>(pictureView);
-
-        // Sets the cache flag to the input argument
-        cacheEnabled = cacheFlag;
-
-        targetWidth = pictureView.getPictureWidth();
-        targetHeight = pictureView.getPictureHeght();
-
+    @Override
+    public URL getPictureURL() {
+        return pictureURL;
     }
-
 
     @Override
     public void handleDownloadState(int state) {
         int outState = -1;
         switch (state) {
-            case PictureCustomRunnable.HTTP_STATE_STARTED: {
-                outState = PictureCustomManager.DOWNLOAD_STARTED;
+            case PictureDownloadRunnable.HTTP_STATE_STARTED: {
+                outState = PictureManager.DOWNLOAD_STARTED;
                 break;
             }
-            case PictureCustomRunnable.HTTP_STATE_COMPLETED: {
-                outState = PictureCustomManager.DOWNLOAD_COMPLETE;
+            case PictureDownloadRunnable.HTTP_STATE_COMPLETED: {
+                decodeRunnable = new PictureDecodeRunnable(this);
+                outState = PictureManager.DOWNLOAD_COMPLETE;
                 break;
             }
-            case PictureCustomRunnable.HTTP_STATE_FAILED: {
-                outState = PictureCustomManager.DOWNLOAD_FAILED;
+            case PictureDownloadRunnable.HTTP_STATE_FAILED: {
+                outState = PictureManager.DOWNLOAD_FAILED;
                 break;
 
             }
@@ -100,8 +67,90 @@ public class PictureTask implements PictureCustomRunnable.TaskRunnableDownloadMe
     }
 
     @Override
-    public URL getPictureURL() {
-        return pictureURL;
+    public void setDecodeThread(Thread thread) {
+        setCurrentThread(thread);
+    }
+
+    @Override
+    public void handleDecodeState(int state) {
+        int outState;
+
+        // Converts the decode state to the overall state.
+        switch (state) {
+            case PictureDecodeRunnable.DECODE_STATE_COMPLETED:
+                outState = PictureManager.TASK_COMPLETE;
+                break;
+            case PictureDecodeRunnable.DECODE_STATE_FAILED:
+                outState = PictureManager.DOWNLOAD_FAILED;
+                break;
+            default:
+                outState = PictureManager.DECODE_STARTED;
+                break;
+        }
+
+        // Passes the state to the ThreadPool object.
+        handleState(outState);
+    }
+
+    @Override
+    public int getTargetWidth() {
+        return targetWidth;
+    }
+
+    @Override
+    public int getTargetHeight() {
+        return targetHeight;
+    }
+
+    @Override
+    public BitmapPool getBitmapPool() {
+        return PictureManager.getInstance().getBitmapPool();
+    }
+
+    Bitmap getImage() {
+        return decodedImage;
+    }
+
+    @Override
+    public void setImage(Bitmap image) {
+        decodedImage = image;
+    }
+
+    boolean isCacheEnabled() {
+        return cacheEnabled;
+    }
+
+    Runnable getDownloadRunnable() {
+        return downloadRunnable;
+    }
+
+    Thread getCurrentThread() {
+        synchronized (PictureManager.getInstance()) {
+            return currentThread;
+        }
+    }
+
+    private void setCurrentThread(Thread thread) {
+        synchronized (PictureManager.getInstance()) {
+            currentThread = thread;
+        }
+    }
+
+    void initializeDownloaderTask(
+            PictureView pictureView,
+            boolean cacheFlag) {
+
+        pictureURL = pictureView.getPictureViewUrl();
+
+        pictureWeakRef = new WeakReference<>(pictureView);
+
+        // Sets the cache flag to the input argument
+        cacheEnabled = cacheFlag;
+
+        targetWidth = pictureView.getWidth();
+        targetHeight = pictureView.getHeight();
+
+
     }
 
     void recycle() {
@@ -115,10 +164,29 @@ public class PictureTask implements PictureCustomRunnable.TaskRunnableDownloadMe
         pictureBuffer = null;
     }
 
-    public PictureView getPictureView() {
+    PictureView getPictureView() {
         if (null != pictureWeakRef) {
             return pictureWeakRef.get();
         }
         return null;
+    }
+
+    Runnable getDownloadThread() {
+
+        return downloadRunnable;
+    }
+
+    @Override
+    public void setDownloadThread(Thread currThread) {
+        setCurrentThread(currThread);
+    }
+
+    Runnable getDecodeRunnable() {
+        return decodeRunnable;
+    }
+
+    // Delegates handling the current state of the task to the PictureCustomManager object
+    private void handleState(int state) {
+        PictureManager.getInstance().handleState(this, state);
     }
 }
