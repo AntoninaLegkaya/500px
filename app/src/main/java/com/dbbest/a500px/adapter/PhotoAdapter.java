@@ -12,12 +12,10 @@ import android.view.ViewGroup;
 
 import com.dbbest.a500px.R;
 import com.dbbest.a500px.data.PhotoEntry;
+import com.dbbest.a500px.loader.LoaderType;
 import com.dbbest.a500px.loader.PictureLoaderManager;
 import com.dbbest.a500px.loader.custom.PictureView;
 import com.dbbest.a500px.model.PhotoModel;
-
-import java.net.MalformedURLException;
-import java.net.URL;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -26,7 +24,6 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
 
 
     private static final String SETTINGS = "settings";
-    private static final String IS_GLIDE = "checkedGlide";
     private final PreviewCallback previewCallback;
     private final SharedPreferences preferences;
     //PMD check
@@ -113,8 +110,9 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
             notifyDataSetChanged();
 
         } else {
-            boolean isGlide = preferences.getBoolean(IS_GLIDE, false);
-            PictureLoaderManager.getInstance((Activity) previewCallback).setGlide(isGlide);
+            String typeLoader = (preferences.getString("name", LoaderType.GLIDE
+                    .geType()));
+            PictureLoaderManager.getInstance((Activity) previewCallback).setLoaderType(typeLoader);
             newCursor.registerDataSetObserver(dataSetObserver);
             rowIDColumn = newCursor.getColumnIndexOrThrow(PhotoEntry._ID);
             dataValid = true;
@@ -138,16 +136,8 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         }
 
         void bind(final PhotoModel photo) {
-//            PictureLoaderManager.getInstance(previewView.getContext())
-//                    .createPictureLoader(previewView, R.drawable.ic_empty, photo.getPreviewUrl()).build();
-            URL url = null;
-            try {
-                url = new URL(photo.getPreviewUrl());
-                previewView.setPictureUrl(url, R.drawable.ic_empty, true);
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
-
+            PictureLoaderManager.getInstance(previewView.getContext())
+                    .createPictureLoader(previewView, R.drawable.ic_empty, photo.getPreviewUrl()).loadBitmap();
         }
     }
 }

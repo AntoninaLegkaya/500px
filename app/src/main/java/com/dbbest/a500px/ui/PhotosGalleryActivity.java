@@ -4,7 +4,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,13 +13,9 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,17 +30,16 @@ import com.dbbest.a500px.net.service.Producer;
 import timber.log.Timber;
 
 
-public class PhotosGalleryActivity extends AppCompatActivity implements Client, LoaderManager.LoaderCallbacks<Cursor>,
-        SwipeRefreshLayout.OnRefreshListener, PhotoAdapter.PreviewCallback {
+public class PhotosGalleryActivity extends BaseActivity implements Client, LoaderManager.LoaderCallbacks<Cursor>,
+        PhotoAdapter.PreviewCallback {
 
     public static final int LOADER_PHOTO = 0;
     public static final int DOWNLOAD_LIMIT = 50;
     private static final int SPAN_COUNT = 3;
-    private static final String SETTINGS = "settings";
-    private static final String IS_GLIDE = "checkedGlide";
+
     private final ServiceConnection connection = new ActiveConnection();
     Producer producer;
-    private SharedPreferences preferences;
+
     private TextView infoView;
     private PhotoAdapter adapter;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -55,17 +49,13 @@ public class PhotosGalleryActivity extends AppCompatActivity implements Client, 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery);
 
-        Toolbar bar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar bar = findViewById(R.id.toolbar);
         setSupportActionBar(bar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle("");
         }
 
-        preferences = getSharedPreferences(SETTINGS, Context.MODE_PRIVATE);
-
-
         getContentResolver().delete(PhotoEntry.URI, null, null);
-
 
         swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(this);
@@ -104,55 +94,6 @@ public class PhotosGalleryActivity extends AppCompatActivity implements Client, 
         unbindService(connection);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        SharedPreferences.Editor editor = preferences.edit();
-        switch (item.getItemId()) {
-
-            case R.id.action_glide_check: {
-                if (!item.isChecked()) {
-                    item.setChecked(true);
-                    editor.putBoolean(IS_GLIDE, true);
-                }
-                break;
-            }
-            case R.id.action_picasso_check: {
-                if (!item.isChecked()) {
-                    item.setChecked(true);
-                    editor.putBoolean(IS_GLIDE, false);
-                }
-                break;
-            }
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-        editor.apply();
-
-        onRefresh();
-        return true;
-
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        boolean isGlideChecked = preferences.getBoolean(IS_GLIDE, false);
-        MenuItem itemGlide = menu.findItem(R.id.action_glide_check);
-        MenuItem itemPicasso = menu.findItem(R.id.action_picasso_check);
-        if (isGlideChecked) {
-            itemGlide.setChecked(true);
-        } else {
-            itemPicasso.setChecked(true);
-        }
-
-        return super.onPrepareOptionsMenu(menu);
-    }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {

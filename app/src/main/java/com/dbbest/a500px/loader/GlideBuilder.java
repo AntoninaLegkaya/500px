@@ -17,7 +17,7 @@ class GlideBuilder extends PictureLoaderBuilder {
     }
 
     @Override
-    public PictureLoaderBuilder build() {
+    public PictureLoaderBuilder loadBitmap() {
         return urlLoad()
                 .placeholder()
                 .applyCropCenter()

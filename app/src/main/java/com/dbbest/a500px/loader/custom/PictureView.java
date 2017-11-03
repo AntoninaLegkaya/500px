@@ -14,6 +14,7 @@ import android.util.AttributeSet;
 import java.net.URL;
 
 public class PictureView extends AppCompatImageView {
+
     private URL pictureUrl;
     private PictureTask pictureLoadTask;
     private boolean isCache;
@@ -108,4 +109,5 @@ public class PictureView extends AppCompatImageView {
     public void setImageResource(int resId) {
         super.setImageResource(resId);
     }
+
 }

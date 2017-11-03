@@ -17,7 +17,7 @@ class PicassoBuilder extends PictureLoaderBuilder {
     }
 
     @Override
-    public PictureLoaderBuilder build() {
+    public PictureLoaderBuilder loadBitmap() {
         return requestBuilder()
                 .holder()
                 .applyCropCenter()

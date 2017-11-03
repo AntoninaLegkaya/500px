@@ -76,7 +76,7 @@ dependencies {
         exclude module: 'xpp3'
     }
     implementation("com.google.code.findbugs:annotations:$lib.findbugs") {
-        // Need to exclude these, or build is broken by:
+        // Need to exclude these, or loadBitmap is broken by:
         //   com.android.dex.DexException: Multiple dex files define Ljavax/annotation/CheckForNull
         exclude module: 'jsr305'
         exclude module: 'jcip-annotations'

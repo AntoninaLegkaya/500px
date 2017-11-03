@@ -3,8 +3,6 @@ package com.dbbest.a500px.loader.custom;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import timber.log.Timber;
-
 public class PictureDecodeRunnable implements Runnable {
 
     static final int DECODE_STATE_FAILED = -1;
@@ -27,8 +25,8 @@ public class PictureDecodeRunnable implements Runnable {
         // From Android 4.4 (KitKat) onward we can re-use if the byte size of
         // the new bitmap is smaller than the reusable bitmap candidate
         // allocation byte count.
-        Timber.i("Check re-use: outWidth: %d:" +
-                " outHeight: %d; inSampleSize: %d", targetOptions.outWidth, targetOptions.outHeight, targetOptions.inSampleSize);
+//        Timber.i("Check re-use: outWidth: %d:" +
+//                " outHeight: %d; inSampleSize: %d", targetOptions.outWidth, targetOptions.outHeight, targetOptions.inSampleSize);
         int width = targetOptions.outWidth / targetOptions.inSampleSize;
         int height = targetOptions.outHeight / targetOptions.inSampleSize;
         int byteCount = width * height * getBytesPerPixel(candidate.getConfig());
@@ -98,7 +96,7 @@ public class PictureDecodeRunnable implements Runnable {
             }
 
             if (reuseBitmap != null && canUseForInBitmap(reuseBitmap, bitmapOptions)) {
-                Timber.i("Re-use bitmap from Bitmap poll");
+//                Timber.i("Re-use bitmap from Bitmap poll");
                 bitmapOptions.inMutable = true;
                 bitmapOptions.inBitmap = reuseBitmap;
                 isMutable = true;

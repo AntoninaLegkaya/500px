@@ -23,7 +23,7 @@ public class PictureLoaderBuilder implements IPictureLoaderBuilder {
     }
 
     @Override
-    public PictureLoaderBuilder build() {
+    public PictureLoaderBuilder loadBitmap() {
         return this;
     }
 

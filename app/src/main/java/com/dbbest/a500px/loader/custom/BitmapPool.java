@@ -4,8 +4,6 @@ import android.graphics.Bitmap;
 
 import java.util.ArrayList;
 
-import timber.log.Timber;
-
 public class BitmapPool {
 
     private final ArrayList<Bitmap> pool;
@@ -49,7 +47,7 @@ public class BitmapPool {
                 pool.remove(0);
             }
             pool.add(bitmap);
-            Timber.i("Bitmap pool size: %d", pool.size());
+//            Timber.i("Bitmap pool size: %d", pool.size());
         }
     }
 

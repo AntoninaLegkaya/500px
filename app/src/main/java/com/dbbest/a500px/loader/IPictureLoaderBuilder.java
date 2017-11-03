@@ -2,7 +2,7 @@ package com.dbbest.a500px.loader;
 
 public interface IPictureLoaderBuilder {
 
-     IPictureLoaderBuilder build();
+     IPictureLoaderBuilder loadBitmap();
 
 //     IPictureLoaderBuilder urlLoad(String url);
 
