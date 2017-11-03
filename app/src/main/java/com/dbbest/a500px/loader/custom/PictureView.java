@@ -76,6 +76,7 @@ public class PictureView extends AppCompatImageView {
             pictureLoadTask = PictureManager.startDownload(this, isCache);
             isDrawn = true;
         }
+
         super.onDraw(canvas);
     }
 

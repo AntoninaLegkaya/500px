@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,10 +12,10 @@ import android.view.MenuItem;
 import com.dbbest.a500px.R;
 import com.dbbest.a500px.loader.LoaderType;
 
-public class BaseActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
-    private static final String SETTINGS = "settings";
-    private static final String SHARED_KEY = "name";
-    private SharedPreferences preferences;
+public class BaseActivity extends AppCompatActivity {
+    protected static final String SETTINGS = "settings";
+    protected static final String SHARED_KEY = "name";
+    protected SharedPreferences preferences;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,7 +56,7 @@ public class BaseActivity extends AppCompatActivity implements SwipeRefreshLayou
             }
             editor.apply();
 
-            onRefresh();
+            onRefreshData();
         }
         return true;
 
@@ -101,8 +100,8 @@ public class BaseActivity extends AppCompatActivity implements SwipeRefreshLayou
         return super.onPrepareOptionsMenu(menu);
     }
 
-    @Override
-    public void onRefresh() {
+
+    public void onRefreshData() {
         // implement in child
     }
 }

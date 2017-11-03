@@ -30,8 +30,8 @@ import com.dbbest.a500px.net.service.Producer;
 import timber.log.Timber;
 
 
-public class PhotosGalleryActivity extends BaseActivity implements Client, LoaderManager.LoaderCallbacks<Cursor>,
-        PhotoAdapter.PreviewCallback {
+public class PhotosGalleryActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener, Client,
+        LoaderManager.LoaderCallbacks<Cursor>, PhotoAdapter.PreviewCallback {
 
     public static final int LOADER_PHOTO = 0;
     public static final int DOWNLOAD_LIMIT = 50;
@@ -79,6 +79,11 @@ public class PhotosGalleryActivity extends BaseActivity implements Client, Loade
         });
         adapter = new PhotoAdapter(this);
         recyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onRefreshData() {
+        onRefresh();
     }
 
     @Override

@@ -30,7 +30,6 @@ public final class PictureManager {
     private static final TimeUnit KEEP_ALIVE_TIME_UNIT;
     private static final int KEEP_ALIVE_TIME = 1;
     private static final PictureManager managerInstance;
-    //    private static int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
 
     static {
 
@@ -72,17 +71,8 @@ public final class PictureManager {
                         switch (inputMessage.what) {
                             case DOWNLOAD_STARTED:
                                 pictureView.setImageResource(pictureView.getPlaceHolder());
-//                                Timber.i("Manager handle message:DOWNLOAD started");
-                                break;
-
-                            case DOWNLOAD_COMPLETE:
-//                                Timber.i("Manager handle message: DOWNLOAD completed");
-                                break;
-                            case DECODE_STARTED:
-//                                Timber.i("Manager handle message: DECODE started");
                                 break;
                             case TASK_COMPLETE:
-//                                Timber.i("Manager handle message: DECODE completed");
                                 pictureView.setImageBitmap(task.getImage());
                                 recycleTask(task);
                                 break;
