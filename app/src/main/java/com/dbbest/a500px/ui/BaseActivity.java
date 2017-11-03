@@ -23,7 +23,6 @@ public class BaseActivity extends AppCompatActivity {
         preferences = getSharedPreferences(SETTINGS, Context.MODE_PRIVATE);
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (preferences != null) {
@@ -91,7 +90,6 @@ public class BaseActivity extends AppCompatActivity {
                     break;
                 }
                 default: {
-
                     throw new IllegalArgumentException("Unknown type of loader");
                 }
             }
@@ -99,7 +97,6 @@ public class BaseActivity extends AppCompatActivity {
 
         return super.onPrepareOptionsMenu(menu);
     }
-
 
     public void onRefreshData() {
         // implement in child
