@@ -74,8 +74,6 @@ public class PictureTask implements PictureDownloadRunnable.TaskRunnableDownload
     @Override
     public void handleDecodeState(int state) {
         int outState;
-
-        // Converts the decode state to the overall state.
         switch (state) {
             case PictureDecodeRunnable.DECODE_STATE_COMPLETED:
                 outState = PictureManager.TASK_COMPLETE;
@@ -88,7 +86,6 @@ public class PictureTask implements PictureDownloadRunnable.TaskRunnableDownload
                 break;
         }
 
-        // Passes the state to the ThreadPool object.
         handleState(outState);
     }
 
@@ -165,7 +162,7 @@ public class PictureTask implements PictureDownloadRunnable.TaskRunnableDownload
     }
 
     PictureView getPictureView() {
-        if (null != pictureWeakRef) {
+        if (pictureWeakRef != null) {
             return pictureWeakRef.get();
         }
         return null;
@@ -185,7 +182,6 @@ public class PictureTask implements PictureDownloadRunnable.TaskRunnableDownload
         return decodeRunnable;
     }
 
-    // Delegates handling the current state of the task to the PictureCustomManager object
     private void handleState(int state) {
         PictureManager.getInstance().handleState(this, state);
     }

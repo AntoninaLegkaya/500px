@@ -13,7 +13,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import timber.log.Timber;
 
 @SuppressFBWarnings("SIC_INNER_SHOULD_BE_STATIC_ANON")
 public final class PictureManager {
@@ -79,7 +78,6 @@ public final class PictureManager {
                             case DOWNLOAD_FAILED:
                                 pictureView.setImageResource(pictureView.getPlaceHolder());
                                 recycleTask(task);
-                                Timber.i("Manager handle message:DOWNLOAD fail");
                                 break;
                             default:
                                 super.handleMessage(inputMessage);
@@ -148,7 +146,7 @@ public final class PictureManager {
         }
     }
 
-     boolean recycleTask(PictureTask downloadTask) {
+    boolean recycleTask(PictureTask downloadTask) {
         downloadTask.recycle();
         return pictureTaskWorkQueue.offer(downloadTask);
     }

@@ -12,9 +12,7 @@ public class BitmapPool {
     private final int height;
 
 
-    BitmapPool(int bitmapWidth,
-               int bitmapHeight,
-               int limit) {
+    BitmapPool(int bitmapWidth, int bitmapHeight, int limit) {
         this.width = bitmapWidth;
         this.height = bitmapHeight;
         this.poolLimit = limit;
