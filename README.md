@@ -5,7 +5,7 @@
  First of all you should create new flavor for new application configuration. In this case open gradle.build (app)  and add this lines
  1. Add new flavor:
  
-![flavor](https://gitlab.mobidev.biz/android/ets/raw/otrar/screenshorts/flavors.png)
+![flavor](https://github.com/AntoninaLegkaya/500px/blob/master/screenshorts/flavors.png)
  
    ```java
      newFlavor {
@@ -59,21 +59,21 @@
      </network-security-config>
  ```
 
-[screenshots]: https://gitlab.mobidev.biz/android/ets/tree/otrar/screenshorts
+[screenshots]: https://github.com/AntoninaLegkaya/500px/blob/master/screenshorts
  2. Create new folder with flavor name in project structure
  
-![package](https://gitlab.mobidev.biz/android/ets/raw/otrar/screenshorts/new_package.png)
+![package](https://github.com/AntoninaLegkaya/500px/blob/master/screenshorts/new_package.png)
 
  add **google-services.json** in newFlavor folder.
  
- ![package](https://gitlab.mobidev.biz/android/ets/raw/otrar/screenshorts/added_google.png)
+ ![package](https://github.com/AntoninaLegkaya/500px/blob/master/screenshorts/added_google.png)
 
 [Move to **src** folder ](https://gitlab.mobidev.biz/android/ets/tree/otrar/app/src)
  3. Create path newFolder/res/values/config.xml in this file placed branded colors. 
  
-![values](https://gitlab.mobidev.biz/android/ets/raw/otrar/screenshorts/resources.png)
+![values](https://github.com/AntoninaLegkaya/500px/blob/master/screenshorts/resources.png)
 
-![config](https://gitlab.mobidev.biz/android/ets/raw/otrar/screenshorts/config.png)
+![config](https://github.com/AntoninaLegkaya/500px/blob/master/screenshorts/config.png)
 
  
  The rule such structure- will be used resources that closer to definition project.
@@ -82,7 +82,7 @@
 folder structure in the flavor and put in the required resource there; during 
 assembly and it will be used.
 
-![config_compose](https://gitlab.mobidev.biz/android/ets/raw/otrar/screenshorts/compose_config.png)
+![config_compose](https://github.com/AntoninaLegkaya/500px/blob/master/screenshorts/compose_config.png)
 
    ```java
    <?xml version="1.0" encoding="utf-8"?>
@@ -135,11 +135,11 @@ assembly and it will be used.
 
 5. Create **drawable** folder in newFlavor package (there you can put resoucers for icons,  shapes)
 
-![drawable](https://gitlab.mobidev.biz/android/ets/raw/otrar/screenshorts/drawable.png)
+![drawable](https://github.com/AntoninaLegkaya/500px/blob/master/screenshorts/drawable.png)
 
 6. Add ic_launcher_background.xml and ic_splash.png  into drawable folder newFavor:
 
-![launcher_bg](https://gitlab.mobidev.biz/android/ets/raw/otrar/screenshorts/launcher_bg.png)
+![launcher_bg](https://github.com/AntoninaLegkaya/500px/blob/master/screenshorts/launcher_bg.png)
 
   ```java
   
@@ -154,39 +154,39 @@ assembly and it will be used.
  
  **chat_logo.png** add into drawable folders (hdpi, mdpi, xhdpi, xxhdpi, xxxhdpi) for differernts screen resolution 
 
-![chat_logo](https://gitlab.mobidev.biz/android/ets/raw/otrar/screenshorts/chat_logo.png)
+![chat_logo](https://github.com/AntoninaLegkaya/500px/blob/master/screenshorts/chat_logo.png)
 
 ## Launcher for differents configuration
 
 
 In Manifest file we selected what kind icon should be used for launcher:
 
-![selector_launch](https://gitlab.mobidev.biz/android/ets/raw/otrar/screenshorts/selector_launcher.png)
+![selector_launch](https://github.com/AntoninaLegkaya/500px/blob/master/screenshorts/selector_launcher.png)
 
-![main_selector_launch](https://gitlab.mobidev.biz/android/ets/raw/otrar/screenshorts/main_selector_launcher.png)
+![main_selector_launch](https://github.com/AntoninaLegkaya/500px/blob/master/screenshorts/main_selector_launcher.png)
 
 Put attention that this files placed in *mipmap-anydpi-v26* Selector will be used for all app cofiguration. We only give him resources from mipmap folder next flavor.
 ic_launcher_background.xml we added early for our newFlavor, we need create mipmap (hdpi, mdpi, xhdpi, xxhdpi, xxxhdpi)
 in structure of newFlavor folder and add ic_launcher_foreground.png resource.
 
-![mipmap](https://gitlab.mobidev.biz/android/ets/raw/otrar/screenshorts/add_mipmap_folder.png)
+![mipmap](https://github.com/AntoninaLegkaya/500px/blob/master/screenshorts/add_mipmap_folder.png)
 
-![mipmap_foreground](https://gitlab.mobidev.biz/android/ets/raw/otrar/screenshorts/add_foreground_launcher.png)
+![mipmap_foreground](https://github.com/AntoninaLegkaya/500px/blob/master/screenshorts/add_foreground_launcher.png)
 
 Select **res** folder newFlavor, click right buton mouse and select New/Image Asset 
-![generate_launcher_1](https://gitlab.mobidev.biz/android/ets/raw/otrar/screenshorts/generate_launcher_1.png)
+![generate_launcher_1](https://github.com/AntoninaLegkaya/500px/blob/master/screenshorts/generate_launcher_1.png)
 
-![generate_launcher_2](https://gitlab.mobidev.biz/android/ets/raw/otrar/screenshorts/generate_launcher_2.png)
+![generate_launcher_2](https://github.com/AntoninaLegkaya/500px/blob/master/screenshorts/generate_launcher_2.png)
 
 Studio generate png resources for different launchers:
 
-![generate_launcher_3](https://gitlab.mobidev.biz/android/ets/raw/otrar/screenshorts/generate_launcher_3.png)
+![generate_launcher_3](https://github.com/AntoninaLegkaya/500px/blob/master/screenshorts/generate_launcher_3.png)
 
 ## Finishing compose new app configuration 
 
 At the end configuration you should obtain such a folders structure:
 
-![finish](https://gitlab.mobidev.biz/android/ets/raw/otrar/screenshorts/new_flavor_finish.png)
+![finish](https://github.com/AntoninaLegkaya/500px/blob/master/screenshorts/new_flavor_finish.png)
 
 
 ## Conclusion
